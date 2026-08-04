@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>SkillForge AI — Autonomous Career Roadmap & Micro-Learning SaaS</title>
+  <meta name="description" content="AI-Powered Autonomous Career Roadmap, Metacognitive Skill Audit & Personalized Micro-Learning Platform.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- FontAwesome for Exact Social Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- GSAP & Lenis Smooth Inertia Scroll Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+</head>
+<body>
+
+  <!-- FLOATING STICKY NAV BAR (Appears on Scroll Past Hero) -->
+  <nav class="floating-sticky-nav" id="stickyNav">
+    <div class="sticky-nav-inner">
+      <a href="#" class="sticky-logo">
+        <svg style="width: 22px; height: 22px; color: var(--purple-primary);" viewBox="0 0 40 40" fill="none">
+          <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+          <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>SkillForge AI</span>
+      </a>
+      <ul class="sticky-nav-links">
+        <li><a href="#" class="active">Roadmaps</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#services">AI Features</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a href="login.html" class="sticky-login-btn" id="stickyLoginBtn">
+        Login 
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/>
+          <path d="m12 5 7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- ============================================================
+         1. HERO WRAPPER WITH PURE VECTOR SVG NOTCHED BACKPLATE
+         ============================================================ -->
+    <div class="hero-notched-wrapper">
+
+      <!-- VECTOR SVG PATH: Exact Reference Design — Large Rounded Card + Tight Notch Cutouts -->
+      <svg class="hero-svg-bg" viewBox="0 0 1200 600" preserveAspectRatio="none">
+        <path fill="#18181D" d="
+          M 120,0
+          L 990,0
+          C 1004,0 1015,11 1015,25
+          L 1015,40
+          C 1015,54 1026,65 1040,65
+          L 1164,65
+          C 1184,65 1200,81 1200,101
+          L 1200,564
+          C 1200,584 1184,600 1164,600
+          L 200,600
+          C 186,600 175,589 175,575
+          L 175,560
+          C 175,546 164,535 150,535
+          L 36,535
+          C 16,535 0,519 0,499
+          L 0,101
+          C 0,81 16,65 36,65
+          L 80,65
+          C 94,65 105,54 105,40
+          L 105,25
+          C 105,11 116,0 130,0
+          Z" />
+      </svg>
+
+      <!-- 1 & 2. Top Header Bar (Desktop Notched Cutouts / Mobile Separate Top Nav) -->
+      <div class="mobile-top-header-bar">
+        <!-- 1. Logo Cutout (Top-Left) -->
+        <div class="hero-logo-cutout">
+          <svg class="logo-icon-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+            <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+            <path d="M8 26L18 34L28 26" stroke="#18181D" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- 2. Login Pill Cutout (Top-Right) -->
+        <div class="hero-login-cutout">
+          <a href="login.html" class="login-pill-btn" id="heroLoginBtn">
+            Login
+            <span class="btn-circle-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Avatar Stack Cutout (Bottom-Left) -->
+      <div class="hero-avatar-cutout">
+        <div class="avatar-stack-imgs">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Learner">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Learner">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Learner">
+          <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80" alt="Learner">
+        </div>
+      </div>
+
+      <!-- Content Layer Over Vector Shape -->
+      <div class="hero-content-layer">
+        
+        <!-- Center Nav Bar (Desktop Inline / Mobile Hamburger Trigger) -->
+        <div class="hero-nav-center">
+          <ul class="desktop-nav-ul">
+            <li><a href="#" class="active">Roadmaps</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#services">AI Features</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+          <button class="mobile-hamburger-btn" id="mobileMenuOpen" aria-label="Open Mobile Menu">
+            <i data-lucide="menu" style="width: 20px; height: 20px; color: #FFF;"></i>
+          </button>
+        </div>
+
+        <!-- Hero Body Grid -->
+        <div class="hero-body-grid">
+          
+          <!-- Left Column: Headline & Subtitle -->
+          <div class="hero-text-area reveal-on-scroll reveal-fade-left">
+            <h1>Mastering How <span style="color: var(--purple-glow);">Skills</span> Get Forged</h1>
+            <p>AI-Powered Autonomous Career Roadmaps, Real-Time Diagnostic Skill Gap Audits, & Personalized Micro-Learning.</p>
+            <a href="login.html" class="btn-pill btn-purple">
+              Explore Roadmaps 
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Right Column: Portrait Photo -->
+          <div class="hero-portrait-wrap reveal-on-scroll reveal-fade-right">
+            <img src="hero-portrait.png" alt="SkillForge Learner">
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         2. LOGO TICKER ROW
+         ============================================================ -->
+    <div class="logo-ticker-row reveal-on-scroll reveal-zoom-in">
+      <div class="brand-ticker-item"><span class="brand-symbol"></span> Google AI Studio</div>
+      <div class="brand-ticker-item">DeepSeek-R1</div>
+      <div class="brand-ticker-item" style="font-style: italic;">Ollama</div>
+      <div class="brand-ticker-item">Node.js°</div>
+      <div class="brand-ticker-item" style="font-size: 0.95rem; background: #111827; color: #FFF; padding: 4px 8px; border-radius: 4px;">PostgreSQL</div>
+      <div class="brand-ticker-item"><span class="brand-symbol"></span> Express.js</div>
+      <div class="brand-ticker-item">Next.js</div>
+    </div>
+
+    <!-- ============================================================
+         3. STATS HIGHLIGHT BANNER
+         ============================================================ -->
+    <div class="stats-banner-card reveal-on-scroll reveal-zoom-in">
+      <div class="stats-banner-text">
+        <h2>
+          10,000+ Career <br>
+          Milestones Forged <br>
+          with AI Precision <span class="underline-bar"></span>
+        </h2>
+        <p>
+          Powered by Google AI Studio Gemini API & DeepSeek-R1 RAG architecture to deliver zero-token waste personalized learning paths.
+        </p>
+        <a href="login.html" class="login-pill-btn" style="display: inline-flex;">
+          Discover Features 
+          <span class="btn-circle-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <div class="stats-boxes-grid">
+        <div class="stat-box-item">
+          <h3>94%</h3>
+          <p>Skill Mastery Rate</p>
+        </div>
+        <div class="stat-box-item">
+          <h3>500+</h3>
+          <p>AI Career Tracks</p>
+        </div>
+        <div class="stat-box-item">
+          <h3>12k+</h3>
+          <p>Verified Badges</p>
+        </div>
+        <div class="stat-box-item">
+          <h3>99.2%</h3>
+          <p>Employer Match</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         4. OUR PRICING SECTION
+         ============================================================ -->
+    <section class="pricing-section reveal-on-scroll" id="pricing">
+      <h2>Flexible SaaS Plans</h2>
+
+      <div class="pricing-cards-grid">
+        <!-- Card 1 (Starter Forge) -->
+        <div class="pricing-card-item reveal-on-scroll stagger-1">
+          <div class="plan-tag-row">
+            <span class="plan-name">Starter Forge</span>
+          </div>
+          <div class="plan-price-display">$0 <span>/ month</span></div>
+          <ul class="plan-features-list">
+            <li><i data-lucide="check"></i> 3 Active Skill Roadmaps</li>
+            <li><i data-lucide="check"></i> Basic Skill Gap Audits</li>
+            <li><i data-lucide="check"></i> Community AI Assistant</li>
+            <li><i data-lucide="check"></i> Standard Verification Links</li>
+            <li><i data-lucide="check"></i> Public Portfolio Hosting</li>
+          </ul>
+          <a href="login.html" class="login-pill-btn" style="width: 100%;">
+            Get Started Free
+            <span class="btn-circle-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <!-- Card 2 (Pro Forge - Featured Black Card) -->
+        <div class="pricing-card-item featured-black reveal-on-scroll stagger-2">
+          <div class="plan-tag-row">
+            <span class="plan-name">Pro Forge</span>
+            <span class="popular-badge-pill">MOST POPULAR</span>
+          </div>
+          <div class="plan-price-display">$9 <span>/ month</span></div>
+          <ul class="plan-features-list">
+            <li><i data-lucide="check"></i> Unlimited AI Roadmaps</li>
+            <li><i data-lucide="check"></i> DeepSeek-R1 Gap Detector</li>
+            <li><i data-lucide="check"></i> 24/7 Gemini RAG Assistant</li>
+            <li><i data-lucide="check"></i> Dynamic Quiz Re-routing</li>
+            <li><i data-lucide="check"></i> HMAC Cryptographic Badges</li>
+            <li><i data-lucide="check"></i> Real-time Analytics Matrix</li>
+          </ul>
+          <a href="login.html" class="btn-pill btn-purple" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            Start 14-Day Trial
+            <span class="btn-circle-icon" style="background: rgba(124, 58, 237, 0.35);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <!-- Card 3 (Enterprise Forge) -->
+        <div class="pricing-card-item reveal-on-scroll stagger-3">
+          <div class="plan-tag-row">
+            <span class="plan-name">Enterprise</span>
+          </div>
+          <div class="plan-price-display">$19 <span>/ month</span></div>
+          <ul class="plan-features-list">
+            <li><i data-lucide="check"></i> Team Skill Matrix Dashboard</li>
+            <li><i data-lucide="check"></i> Custom Org Career Paths</li>
+            <li><i data-lucide="check"></i> Dedicated Local Ollama Cluster</li>
+            <li><i data-lucide="check"></i> LMS & GitHub Integrations</li>
+            <li><i data-lucide="check"></i> Dedicated Success Manager</li>
+            <li><i data-lucide="check"></i> Custom API Webhooks</li>
+            <li><i data-lucide="check"></i> Priority SLA Support</li>
+          </ul>
+          <a href="login.html" class="login-pill-btn" style="width: 100%;">
+            Contact Enterprise
+            <span class="btn-circle-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. SERVICES ACCORDION SECTION
+         ============================================================ -->
+    <section class="services-section reveal-on-scroll" id="services">
+      <div class="services-main-grid">
+        <div class="reveal-on-scroll reveal-fade-left">
+          <div class="services-tag">CORE AI ARCHITECTURE</div>
+          <h2>
+            Architecting Careers <br>
+            Through AI Innovation <br>
+            And Analytics
+          </h2>
+          <p>
+            We combine RAG token optimization, metacognitive analytics, and local DeepSeek-R1 fallback to deliver hyper-personalized career roadmaps.
+          </p>
+          <a href="login.html" class="login-pill-btn" style="display: inline-flex;">
+            Explore All Features 
+            <span class="btn-circle-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <div class="accordion-container-stack reveal-on-scroll reveal-fade-right">
+          <div class="acc-card-item">
+            <div class="acc-card-header">
+              <span>Metacognitive Skill Gap Detector</span>
+              <i data-lucide="chevron-right"></i>
+            </div>
+            <div class="acc-card-body">
+              Cross-references user self-reported confidence against real-time diagnostic test performance to instantly spot overconfidence or hidden learning blind spots.
+            </div>
+          </div>
+
+          <div class="acc-card-item open">
+            <div class="acc-card-header">
+              <span>Multi-Model RAG AI Engine</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="acc-card-body">
+              Combines Google AI Studio (Gemini 1.5 API) with Retrieval-Augmented Generation for low token usage, with automatic rotation to local DeepSeek-R1 (via Ollama).
+            </div>
+          </div>
+
+          <div class="acc-card-item">
+            <div class="acc-card-header">
+              <span>Dynamic Diagnostic Path Re-routing</span>
+              <i data-lucide="chevron-right"></i>
+            </div>
+            <div class="acc-card-body">
+              Automatically rewrites your career learning modules based on quiz answers, skipping mastered concepts and focusing strictly on high-impact weak topics.
+            </div>
+          </div>
+
+          <div class="acc-card-item">
+            <div class="acc-card-header">
+              <span>Cryptographic Badge Verification</span>
+              <i data-lucide="chevron-right"></i>
+            </div>
+            <div class="acc-card-body">
+              Generates tamper-proof HMAC-SHA256 digital skill certificates with zero-trust public verification links for employers and recruiters.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6. TESTIMONIALS DARK CONTAINER
+         ============================================================ -->
+    <div class="testimonials-dark-container reveal-on-scroll">
+      <div class="reveal-on-scroll reveal-fade-left">
+        <div class="test-tag-line">PROVEN STUDENT & LEARNER IMPACT</div>
+        <h2>
+          Real Stories <br>
+          From SkillForge <br>
+          Achievers
+        </h2>
+        <p>
+          Discover how our AI-guided roadmaps helped learners bridge their skill gaps and land top engineering roles.
+        </p>
+
+        <!-- Decorative Purple Line Art -->
+        <svg width="180" height="40" viewBox="0 0 180 40" fill="none">
+          <path d="M0 20C30 5 60 35 90 20C120 5 150 35 180 20" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="tweet-cards-list">
+        <div class="tweet-box reveal-on-scroll stagger-1">
+          <div class="tweet-user-row">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="User" class="tweet-user-avatar">
+            <div>
+              <h4 style="font-size: 0.95rem; color: #FFF;">Sarah Chen</h4>
+              <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">@sarah_dev</span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; color: rgba(255,255,255,0.75);">
+            "SkillForge's Confidence-Gap Detector caught my weak points in Node.js Express middleware before my tech interview. Landed my dream full-stack role in 3 weeks!"
+          </p>
+        </div>
+
+        <div class="tweet-box reveal-on-scroll stagger-2">
+          <div class="tweet-user-row">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="User" class="tweet-user-avatar">
+            <div>
+              <h4 style="font-size: 0.95rem; color: #FFF;">Alex Rivera</h4>
+              <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">@alex_rivera</span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; color: rgba(255,255,255,0.75);">
+            "The HMAC cryptographic badges are amazing! I attached my SkillForge audit link to my resume and recruiters were blown away."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         7. FAQ SECTION
+         ============================================================ -->
+    <section id="faq" class="faq-main-wrapper reveal-on-scroll reveal-fade-left">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-card-box reveal-on-scroll stagger-1" onclick="toggleFaq(this)">
+        <div class="faq-question-row">
+          <span>How does SkillForge AI generate personalized roadmaps?</span>
+          <span class="faq-icon-sign">✕</span>
+        </div>
+        <div class="faq-answer-body">
+          We combine Google AI Studio (Gemini 1.5 Flash/Pro) with RAG optimization, and fall back to locally running DeepSeek-R1 (1.5B / 7B via Ollama & Node.js).
+        </div>
+      </div>
+
+      <div class="faq-card-box reveal-on-scroll stagger-2" onclick="toggleFaq(this)">
+        <div class="faq-question-row">
+          <span>Are certificates verifiable by employers?</span>
+          <span class="faq-icon-sign">+</span>
+        </div>
+        <div class="faq-answer-body">
+          Yes! Every earned badge includes a unique cryptographic HMAC-SHA256 signature that employers can verify on a zero-trust public link without log in.
+        </div>
+      </div>
+
+      <div class="faq-card-box reveal-on-scroll stagger-3" onclick="toggleFaq(this)">
+        <div class="faq-question-row">
+          <span>How are learning roadmaps generated?</span>
+          <span class="faq-icon-sign">+</span>
+        </div>
+        <div class="faq-answer-body">
+          Roadmaps are dynamically constructed by indexing real-world job postings, official technical docs, and your personal diagnostic assessment scores.
+        </div>
+      </div>
+
+      <div class="faq-card-box reveal-on-scroll stagger-4" onclick="toggleFaq(this)">
+        <div class="faq-question-row">
+          <span>Can I use local LLMs for AI tutoring?</span>
+          <span class="faq-icon-sign">+</span>
+        </div>
+        <div class="faq-answer-body">
+          Absolutely. SkillForge includes full Node.js Express integration for local DeepSeek-R1 models running via Ollama on your computer.
+        </div>
+      </div>
+
+      <div class="faq-card-box reveal-on-scroll stagger-1" onclick="toggleFaq(this)">
+        <div class="faq-question-row">
+          <span>Is there a free tier for students?</span>
+          <span class="faq-icon-sign">+</span>
+        </div>
+        <div class="faq-answer-body">
+          Yes, our Starter Forge plan is free forever and includes 3 active AI career roadmaps, basic diagnostic audits, and standard verification badges.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8. EXACT MATCH FOOTER (CUSTOM NOTCH DESIGN)
+         ============================================================ -->
+    <footer class="exact-footer-wrapper">
+      <div class="exact-footer-card reveal-on-scroll">
+        
+        <!-- Background Decorative Swirls -->
+        <div class="footer-swirl-wrapper">
+          <svg class="footer-bg-swirl" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="400" cy="400" r="380" stroke="rgba(255,255,255,0.03)" stroke-width="20" />
+            <circle cx="400" cy="400" r="300" stroke="rgba(255,255,255,0.02)" stroke-width="40" />
+            <circle cx="400" cy="400" r="200" stroke="rgba(255,255,255,0.01)" stroke-width="60" />
+          </svg>
+        </div>
+
+        <!-- Top Left Notch (Logo) -->
+        <div class="tl-notch">
+          <div class="footer-logo-box">
+            <svg style="width: 32px; height: 32px; color: var(--purple-primary);" viewBox="0 0 32 32" fill="none">
+              <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+              <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bottom Right Notch (Socials) -->
+        <div class="br-notch">
+          <div class="social-icon-row">
+            <i class="fa-brands fa-x-twitter"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-pinterest"></i>
+            <i class="fa-brands fa-linkedin-in"></i>
+            <i class="fa-brands fa-tiktok"></i>
+            <i class="fa-brands fa-youtube"></i>
+          </div>
+        </div>
+
+        <!-- Main Footer Content -->
+        <div class="footer-content-inner">
+          <h1 class="footer-giant-headline">
+            Learn. <span class="text-purple">Forge.</span> Succeed.
+          </h1>
+
+          <div class="footer-columns-grid">
+            <!-- Left Text Column -->
+            <div class="footer-col-left">
+              <p>
+                Empowering developers with AI-driven autonomous career roadmaps, real-time metacognitive skill audits, and verifiable cryptographic badges.
+              </p>
+              <div class="footer-copyright">
+                &copy; 2026 SkillForge AI. All rights reserved.
+              </div>
+            </div>
+
+            <!-- Middle Links Column -->
+            <div class="footer-col-links">
+              <h4>Platform</h4>
+              <a href="login.html">Roadmaps</a>
+              <a href="login.html">Skill Audits</a>
+              <a href="login.html">Verifications</a>
+            </div>
+
+            <!-- Right Links Column -->
+            <div class="footer-col-links">
+              <h4>Company</h4>
+              <a href="#">About Us</a>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Service</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SCROLL TO TOP BUTTON -->
+  <button id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m18 15-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <!-- JavaScript Engine -->
+  <script src="app.js"></script>
+</body>
+</html>
