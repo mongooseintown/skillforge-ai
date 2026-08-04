@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Sign Up — SkillForge AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Web SDK v10 CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      GithubAuthProvider, 
+      signInWithPopup, 
+      signInWithRedirect, 
+      getRedirectResult,
+      createUserWithEmailAndPassword, 
+      updateProfile 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT3Y2VlxtYKi5hMBXgXnrk0IScPMvD5sc",
+      authDomain: "skillforge-ai-3674f.firebaseapp.com",
+      projectId: "skillforge-ai-3674f",
+      storageBucket: "skillforge-ai-3674f.firebasestorage.app",
+      messagingSenderId: "313873956489",
+      appId: "1:313873956489:web:f16f4edc9c859013c01058",
+      measurementId: "G-MLYLR93BV5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.addScope('profile');
+    googleProvider.addScope('email');
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+
+    const githubProvider = new GithubAuthProvider();
+    githubProvider.addScope('read:user');
+    githubProvider.addScope('user:email');
+
+    function storeUserProfile(user, exactName, authProvider, targetRole) {
+      const profile = {
+        uid: user.uid,
+        name: exactName || user.displayName || 'Learner',
+        displayName: exactName || user.displayName || 'Learner',
+        email: user.email || '',
+        photoURL: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName || 'Learner')}&background=7C3AED&color=ffffff&bold=true&rounded=true&size=256`,
+        targetRole: targetRole || 'Full-Stack Developer (MERN / PERN)',
+        authProvider: authProvider || 'password',
+        lastLogin: new Date().toISOString()
+      };
+
+      localStorage.setItem('user', JSON.stringify(profile));
+      return profile;
+    }
+
+    function extractAndStoreGoogleUser(user) {
+      const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+      const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+      return storeUserProfile(user, exactName, 'Google');
+    }
+
+    function extractAndStoreGithubUser(user) {
+      const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+      const exactName = user.displayName || pData.displayName || user.reloadUserInfo?.screenName || (user.email ? user.email.split('@')[0] : 'Developer');
+      return storeUserProfile(user, exactName, 'GitHub');
+    }
+
+    window.showAuthError = function(message) {
+      const box = document.getElementById('authErrorBox');
+      const text = document.getElementById('authErrorText');
+      const card = document.querySelector('.card');
+      if (box && text) {
+        text.textContent = message;
+        box.style.display = 'flex';
+      }
+      if (card) {
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+      }
+    };
+
+    window.clearAuthError = function() {
+      const box = document.getElementById('authErrorBox');
+      if (box) box.style.display = 'none';
+    };
+
+    function setSubmittingState(isLoading) {
+      const btn = document.getElementById('submitBtn');
+      if (!btn) return;
+      const text = btn.querySelector('.btn-text');
+      const spinner = btn.querySelector('.btn-spinner');
+      
+      btn.disabled = isLoading;
+      if (isLoading) {
+        if (text) text.style.display = 'none';
+        if (spinner) spinner.style.display = 'inline-flex';
+      } else {
+        if (text) text.style.display = 'inline';
+        if (spinner) spinner.style.display = 'none';
+      }
+    }
+
+    window.handleGoogleRegister = async function() {
+      clearAuthError();
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        if (result && result.user) {
+          extractAndStoreGoogleUser(result.user);
+          window.location.href = 'dashboard.html';
+        }
+      } catch (err) {
+        console.error("Google Auth Error:", err);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          signInWithRedirect(auth, googleProvider);
+        } else if (err.code !== 'auth/popup-closed-by-user') {
+          showAuthError(err.message || "Google Sign-In was cancelled or failed.");
+        }
+      }
+    };
+
+    window.handleGithubRegister = async function() {
+      clearAuthError();
+      try {
+        const result = await signInWithPopup(auth, githubProvider);
+        if (result && result.user) {
+          extractAndStoreGithubUser(result.user);
+          window.location.href = 'dashboard.html';
+        }
+      } catch (err) {
+        console.error("GitHub Auth Error:", err);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          signInWithRedirect(auth, githubProvider);
+        } else if (err.code !== 'auth/popup-closed-by-user') {
+          showAuthError(err.message || "GitHub Sign-In was cancelled or failed.");
+        }
+      }
+    };
+
+    getRedirectResult(auth).then((result) => {
+      if (result && result.user) {
+        if (result.providerId === 'github.com' || result.user.providerData?.[0]?.providerId === 'github.com') {
+          extractAndStoreGithubUser(result.user);
+        } else {
+          extractAndStoreGoogleUser(result.user);
+        }
+        window.location.href = 'dashboard.html';
+      }
+    }).catch((err) => {
+      console.error(err);
+      showAuthError(err.message);
+    });
+
+    window.handleEmailRegister = async function(e) {
+      e.preventDefault();
+      clearAuthError();
+
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const targetRole = 'Full-Stack Developer (MERN / PERN)';
+
+      if (!name || !email || !password) {
+        showAuthError("Please fill out all fields.");
+        return;
+      }
+
+      if (password.length < 6) {
+        showAuthError("Password must be at least 6 characters.");
+        return;
+      }
+
+      setSubmittingState(true);
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await updateProfile(user, { displayName: name });
+        storeUserProfile(user, name, 'password', targetRole);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        setSubmittingState(false);
+        console.error("Signup error:", err);
+        if (err.code === 'auth/email-already-in-use') {
+          showAuthError("This email is already registered. Please sign in instead.");
+        } else if (err.code === 'auth/weak-password') {
+          showAuthError("Password is too weak. Include numbers and mixed-case letters.");
+        } else if (err.code === 'auth/invalid-email') {
+          showAuthError("Please enter a valid email address.");
+        } else {
+          // Fallback offline / manual mode
+          const manualProfile = {
+            uid: 'manual-' + Date.now(),
+            name: name,
+            displayName: name,
+            email: email,
+            photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7C3AED&color=ffffff&bold=true&rounded=true`,
+            targetRole: targetRole,
+            authProvider: 'password'
+          };
+          localStorage.setItem('user', JSON.stringify(manualProfile));
+          window.location.href = 'dashboard.html';
+        }
+      }
+    };
+  </script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #05020E;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #FFFFFF;
+    }
+
+    #celestialCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 10;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ── GLASS CARD ── */
+    .card {
+      width: 100%;
+      max-width: 370px;
+      background: linear-gradient(145deg, rgba(18, 14, 30, 0.85) 0%, rgba(10, 8, 18, 0.9) 100%);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      padding: 32px 30px 26px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-sub {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 22px;
+      font-weight: 400;
+    }
+
+    /* ── INLINE ERROR BADGE ── */
+    .auth-error-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 6px;
+      color: #FCA5A5;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+    .auth-error-box svg {
+      flex-shrink: 0;
+      color: #EF4444;
+    }
+
+    /* ── SHAKE ANIMATION ── */
+    @keyframes shakeCard {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-6px); }
+      30%, 60%, 90% { transform: translateX(6px); }
+    }
+    .shake {
+      animation: shakeCard 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    /* ── INPUTS ── */
+    .field {
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .field-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .inp {
+      width: 100%;
+      height: 46px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 0 16px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .inp:focus {
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .inp::placeholder {
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .inp-pw {
+      padding-right: 58px;
+    }
+
+    .show-btn {
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .show-btn:hover { color: #fff; }
+
+    /* ── PASSWORD STRENGTH METER ── */
+    .pw-strength-wrap {
+      margin-top: 5px;
+      margin-bottom: 8px;
+    }
+    .strength-bars {
+      display: flex;
+      gap: 4px;
+      height: 3px;
+      margin-bottom: 4px;
+    }
+    .bar-segment {
+      flex: 1;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .strength-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+    }
+    .strength-text {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      transition: color 0.3s ease;
+    }
+    .strength-hint {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .strength-weak #bar1 { background: #EF4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+    .strength-weak .strength-text { color: #EF4444; }
+
+    .strength-fair #bar1,
+    .strength-fair #bar2 { background: #F59E0B; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+    .strength-fair .strength-text { color: #F59E0B; }
+
+    .strength-good #bar1,
+    .strength-good #bar2,
+    .strength-good #bar3 { background: #06B6D4; box-shadow: 0 0 6px rgba(6, 182, 212, 0.4); }
+    .strength-good .strength-text { color: #06B6D4; }
+
+    .strength-strong #bar1,
+    .strength-strong #bar2,
+    .strength-strong #bar3,
+    .strength-strong #bar4 { background: #10B981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+    .strength-strong .strength-text { color: #10B981; }
+
+    /* ── PRIMARY BUTTON ── */
+    .btn-primary {
+      width: 100%;
+      height: 46px;
+      background: linear-gradient(90deg, #5B17C7 0%, #7928E8 40%, #9333EA 100%);
+      border: none;
+      border-radius: 6px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.2s, box-shadow 0.3s;
+      box-shadow: 0 4px 22px rgba(123, 40, 232, 0.4);
+      margin-top: 4px;
+    }
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.92;
+      box-shadow: 0 6px 30px rgba(123, 40, 232, 0.55);
+    }
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-spinner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+    }
+    @keyframes spinWheel {
+      to { transform: rotate(360deg); }
+    }
+    .spinner-svg {
+      width: 17px;
+      height: 17px;
+      animation: spinWheel 0.8s linear infinite;
+    }
+
+    /* ── LEGAL COMPLIANCE NOTE ── */
+    .legal-note {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .legal-note a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .legal-note a:hover {
+      color: #A78BFA;
+    }
+
+    /* ── OR DIVIDER ── */
+    .or-row {
+      display: flex;
+      align-items: center;
+      margin: 14px 0;
+      color: rgba(255, 255, 255, 0.32);
+      font-size: 0.78rem;
+    }
+    .or-row::before, .or-row::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .or-row span { padding: 0 12px; }
+
+    /* ── SOCIAL BUTTONS ── */
+    .btn-social {
+      width: 100%;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-social:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ── FOOTER ── */
+    .foot {
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
+    .foot a {
+      color: #7C3AED;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .foot a:hover { color: #A78BFA; text-decoration: underline; }
+
+    /* ── AUTH BRAND IDENTITY (NATURAL LOGO & TEXT) ── */
+    .auth-brand-logo {
+      position: absolute;
+      top: 32px;
+      left: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      z-index: 100;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .auth-brand-logo:hover {
+      transform: translateY(-1px);
+    }
+    .auth-brand-logo:hover .auth-logo-svg {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.45));
+    }
+    .auth-logo-svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+    .auth-brand-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      letter-spacing: -0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s ease;
+    }
+    .brand-accent {
+      color: #A78BFA;
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .auth-brand-logo {
+        top: 20px;
+        left: 20px;
+        gap: 10px;
+      }
+      .auth-logo-svg {
+        width: 24px;
+        height: 24px;
+      }
+      .auth-brand-name {
+        font-size: 1.02rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 26px 20px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="celestialCanvas"></canvas>
+
+<div class="page-wrap">
+
+  <!-- TOP-LEFT CLEAN BRAND IDENTITY -->
+  <a href="index.html" class="auth-brand-logo" title="SkillForge AI">
+    <svg class="auth-logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#A78BFA"/>
+      <path d="M8 20L18 28L28 20" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+      <path d="M8 26L18 34L28 26" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span class="auth-brand-name">SkillForge <span class="brand-accent">AI</span></span>
+  </a>
+
+  <div class="card">
+    <h1 class="card-title">Sign Up</h1>
+    <p class="card-sub">Launch your personalized AI career roadmap</p>
+
+    <!-- INLINE ERROR CONTAINER -->
+    <div class="auth-error-box" id="authErrorBox" style="display: none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span id="authErrorText"></span>
+    </div>
+
+    <form onsubmit="handleEmailRegister(event)">
+      <div class="field">
+        <div class="field-inner">
+          <input type="text" id="regName" class="inp" placeholder="Full Name" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-inner">
+          <input type="email" id="regEmail" class="inp" placeholder="Email Address" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-inner">
+          <input type="password" id="regPassword" class="inp inp-pw" placeholder="Password" required minlength="6" oninput="checkPwStrength(this.value)">
+          <button type="button" class="show-btn" id="showPw" onclick="togglePw()">Show</button>
+        </div>
+        
+        <!-- PASSWORD STRENGTH METER -->
+        <div class="pw-strength-wrap" id="pwStrengthWrap" style="display: none;">
+          <div class="strength-bars">
+            <div class="bar-segment" id="bar1"></div>
+            <div class="bar-segment" id="bar2"></div>
+            <div class="bar-segment" id="bar3"></div>
+            <div class="bar-segment" id="bar4"></div>
+          </div>
+          <div class="strength-label-row">
+            <span class="strength-text" id="strengthText">Weak</span>
+            <span class="strength-hint" id="strengthHint">Min 8 chars, add numbers</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">
+        <span class="btn-text">Create Account</span>
+        <span class="btn-spinner" style="display: none;">
+          <svg class="spinner-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.2)"/>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke="#FFFFFF" stroke-linecap="round"/>
+          </svg>
+          <span>Architecting workspace...</span>
+        </span>
+      </button>
+    </form>
+
+    <!-- MICRO LEGAL COMPLIANCE -->
+    <p class="legal-note">
+      By continuing, you agree to SkillForge AI's <a href="javascript:void(0)">Terms</a> &amp; <a href="javascript:void(0)">Privacy Policy</a>.
+    </p>
+
+    <div class="or-row"><span>or</span></div>
+
+    <button type="button" class="btn-social" onclick="handleGoogleRegister()">
+      <svg width="16" height="16" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.07 5.07 0 01-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      <span>Sign up with Google</span>
+    </button>
+
+    <button type="button" class="btn-social" onclick="handleGithubRegister()">
+      <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      <span>Sign up with GitHub</span>
+    </button>
+  </div>
+
+  <div class="foot">
+    Already have an account? <a href="login.html">Sign In</a>
+  </div>
+</div>
+
+<script>
+  function togglePw() {
+    const inp = document.getElementById('regPassword');
+    const btn = document.getElementById('showPw');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  }
+
+  function checkPwStrength(val) {
+    const wrap = document.getElementById('pwStrengthWrap');
+    const text = document.getElementById('strengthText');
+    const hint = document.getElementById('strengthHint');
+    if (!wrap) return;
+
+    if (!val || val.length === 0) {
+      wrap.style.display = 'none';
+      return;
+    }
+
+    wrap.style.display = 'block';
+    wrap.className = 'pw-strength-wrap';
+
+    let score = 0;
+    if (val.length >= 6) score += 1;
+    if (val.length >= 8) score += 1;
+    if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score += 1;
+    if (/[0-9]/.test(val) || /[^A-Za-z0-9]/.test(val)) score += 1;
+
+    if (score <= 1) {
+      wrap.classList.add('strength-weak');
+      text.textContent = 'Weak';
+      hint.textContent = 'Min 8 chars, add numbers';
+    } else if (score === 2) {
+      wrap.classList.add('strength-fair');
+      text.textContent = 'Fair';
+      hint.textContent = 'Add uppercase & symbols';
+    } else if (score === 3) {
+      wrap.classList.add('strength-good');
+      text.textContent = 'Good';
+      hint.textContent = 'Add special characters';
+    } else {
+      wrap.classList.add('strength-strong');
+      text.textContent = 'Strong';
+      hint.textContent = 'Great security!';
+    }
+  }
+
+  // ─── CANVAS: Exact Reference Celestial Scene ───
+  const C = document.getElementById('celestialCanvas');
+  const X = C.getContext('2d');
+  let W, H;
+
+  function resize() { W = C.width = innerWidth; H = C.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+
+  // Stars
+  const stars = Array.from({length: 90}, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.2 + 0.2,
+    a: Math.random() * 0.6 + 0.2,
+    s: Math.random() * 0.015 + 0.004,
+    p: Math.random() * 6.28
+  }));
+
+  function frame() {
+    X.clearRect(0, 0, W, H);
+
+    // 1) Deep space fill
+    X.fillStyle = '#05020E';
+    X.fillRect(0, 0, W, H);
+
+    // 2) Subtle deep purple ambient wash
+    const amb = X.createRadialGradient(W * 0.7, H * 0.3, 0, W * 0.6, H * 0.5, W * 0.9);
+    amb.addColorStop(0, 'rgba(30, 8, 60, 0.5)');
+    amb.addColorStop(0.4, 'rgba(15, 4, 35, 0.3)');
+    amb.addColorStop(1, 'rgba(5, 2, 14, 0)');
+    X.fillStyle = amb;
+    X.fillRect(0, 0, W, H);
+
+    // 3) Stars
+    const t = Date.now();
+    stars.forEach(s => {
+      const flick = Math.sin(t * s.s + s.p) * 0.2;
+      X.beginPath();
+      X.arc(s.x * W, s.y * H, s.r, 0, 6.28);
+      X.fillStyle = `rgba(220, 210, 255, ${Math.max(0.08, Math.min(0.8, s.a + flick))})`;
+      X.fill();
+    });
+
+    // 4) Small bokeh orb — upper left
+    const bk = X.createRadialGradient(W * 0.12, H * 0.25, 0, W * 0.12, H * 0.25, 70);
+    bk.addColorStop(0, 'rgba(180, 140, 255, 0.22)');
+    bk.addColorStop(0.5, 'rgba(130, 80, 220, 0.08)');
+    bk.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = bk;
+    X.beginPath(); X.arc(W * 0.12, H * 0.25, 70, 0, 6.28); X.fill();
+
+    // 5) PLANET — large sphere upper-right
+    const pR = Math.max(W * 0.42, 520);
+    const pX = W * 0.82;
+    const pY = H * 0.22;
+
+    // Planet dark body
+    X.save();
+    X.beginPath(); X.arc(pX, pY, pR, 0, 6.28); X.clip();
+
+    const pSurf = X.createRadialGradient(pX + pR * 0.3, pY - pR * 0.2, pR * 0.05, pX, pY, pR);
+    pSurf.addColorStop(0, '#0C0520');
+    pSurf.addColorStop(0.4, '#060210');
+    pSurf.addColorStop(1, '#030008');
+    X.fillStyle = pSurf;
+    X.fillRect(pX - pR, pY - pR, pR * 2, pR * 2);
+
+    // Inner crescent violet wash (bottom-left face)
+    const iRim = X.createRadialGradient(
+      pX - pR * 0.7, pY + pR * 0.55, pR * 0.15,
+      pX, pY, pR
+    );
+    iRim.addColorStop(0, 'rgba(180, 80, 255, 0.5)');
+    iRim.addColorStop(0.12, 'rgba(139, 60, 220, 0.4)');
+    iRim.addColorStop(0.3, 'rgba(100, 30, 180, 0.2)');
+    iRim.addColorStop(0.55, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = iRim;
+    X.fillRect(pX - pR, pY - pR, pR * 2, pR * 2);
+
+    X.restore();
+
+    // 6) Crescent rim glow — outer arc (left edge of planet)
+    X.save();
+    // Wide soft purple glow
+    X.beginPath();
+    X.arc(pX, pY, pR, Math.PI * 0.42, Math.PI * 1.18, false);
+    X.lineWidth = 18;
+    X.strokeStyle = 'rgba(150, 60, 240, 0.5)';
+    X.shadowColor = '#B56BFF';
+    X.shadowBlur = 60;
+    X.stroke();
+
+    // Sharp white-violet core edge
+    X.beginPath();
+    X.arc(pX, pY, pR, Math.PI * 0.48, Math.PI * 1.12, false);
+    X.lineWidth = 3.5;
+    X.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+    X.shadowColor = '#D8A0FF';
+    X.shadowBlur = 30;
+    X.stroke();
+    X.restore();
+
+    // 7) Intense lens flare at crescent midpoint
+    const fAngle = Math.PI * 0.82;
+    const fX = pX + Math.cos(fAngle) * pR;
+    const fY = pY + Math.sin(fAngle) * pR;
+
+    // Radial flare burst
+    const fl = X.createRadialGradient(fX, fY, 0, fX, fY, 250);
+    fl.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
+    fl.addColorStop(0.08, 'rgba(240, 180, 255, 0.9)');
+    fl.addColorStop(0.2, 'rgba(200, 130, 255, 0.65)');
+    fl.addColorStop(0.4, 'rgba(140, 60, 230, 0.3)');
+    fl.addColorStop(0.7, 'rgba(80, 20, 160, 0.08)');
+    fl.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = fl;
+    X.beginPath(); X.arc(fX, fY, 250, 0, 6.28); X.fill();
+
+    // Horizontal anamorphic light streak
+    const stk = X.createLinearGradient(fX - 300, fY, fX + 300, fY);
+    stk.addColorStop(0, 'rgba(180, 100, 255, 0)');
+    stk.addColorStop(0.35, 'rgba(200, 140, 255, 0.2)');
+    stk.addColorStop(0.5, 'rgba(255, 255, 255, 0.75)');
+    stk.addColorStop(0.65, 'rgba(200, 140, 255, 0.2)');
+    stk.addColorStop(1, 'rgba(180, 100, 255, 0)');
+    X.fillStyle = stk;
+    X.fillRect(fX - 300, fY - 2.5, 600, 5);
+
+    // Secondary wider softer streak
+    const stk2 = X.createLinearGradient(fX - 400, fY, fX + 400, fY);
+    stk2.addColorStop(0, 'rgba(150, 80, 230, 0)');
+    stk2.addColorStop(0.4, 'rgba(160, 100, 240, 0.08)');
+    stk2.addColorStop(0.5, 'rgba(220, 180, 255, 0.3)');
+    stk2.addColorStop(0.6, 'rgba(160, 100, 240, 0.08)');
+    stk2.addColorStop(1, 'rgba(150, 80, 230, 0)');
+    X.fillStyle = stk2;
+    X.fillRect(fX - 400, fY - 8, 800, 16);
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+</script>
+
+</body>
+</html>

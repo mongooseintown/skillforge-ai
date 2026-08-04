@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Dashboard — SkillForge AI | Autonomous Career Roadmap Workspace</title>
+  <meta name="description" content="SkillForge AI Learner Dashboard — Autonomous AI Career Roadmaps & Metacognitive Skill Audits.">
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    .role-select-dropdown {
+      background: #18181D;
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      padding-left: 14px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B5CF6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .role-select-dropdown option {
+      background: #18181D;
+      color: #FFFFFF;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body style="background: #0E0E12; color: #FFFFFF; min-height: 100vh;">
+
+  <!-- DASHBOARD TOP NAVIGATION BAR -->
+  <nav style="background: rgba(24, 24, 29, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 14px 32px; position: sticky; top: 0; z-index: 1000;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+      
+      <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFF; font-family: var(--font-heading); font-weight: 800; font-size: 1.15rem;">
+        <svg style="width: 26px; height: 26px; color: var(--purple-primary);" viewBox="0 0 40 40" fill="none">
+          <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+          <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>SkillForge AI</span>
+        <span style="font-size: 0.7rem; background: var(--purple-primary); color: #FFF; padding: 2px 8px; border-radius: 999px; font-weight: 700;">PRO DASHBOARD</span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <a href="index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;">Home</a>
+        <a href="dashboard.html" style="color: #FFF; text-decoration: none; font-size: 0.9rem; font-weight: 700; border-bottom: 2px solid var(--purple-primary); padding-bottom: 2px;">Roadmap Generator</a>
+        
+        <!-- DYNAMIC USER PROFILE SECTION -->
+        <div id="userProfilePill" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); padding: 5px 14px 5px 6px; border-radius: 999px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          <img id="userAvatarImg" referrerpolicy="no-referrer" crossorigin="anonymous" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--purple-primary);" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(document.getElementById('userNameSpan')?.textContent || 'User') + '&background=7C3AED&color=ffffff&bold=true&rounded=true';">
+          <div style="display: flex; flex-direction: column;">
+            <span id="userNameSpan" style="font-size: 0.88rem; font-weight: 700; color: #FFF; line-height: 1.2;">Loading...</span>
+            <span id="userProviderPill" style="font-size: 0.65rem; color: #A78BFA; font-weight: 600; text-transform: uppercase;">Authenticated</span>
+          </div>
+        </div>
+
+        <!-- REAL SIGN OUT BUTTON -->
+        <button id="signOutBtn" onclick="handleSignOut()" class="btn-pill btn-purple" style="padding: 8px 16px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- DASHBOARD MAIN CONTAINER -->
+  <main style="max-width: 1100px; margin: 36px auto; padding: 0 20px;">
+
+    <!-- WELCOME BANNER -->
+    <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(24, 24, 29, 0.9) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 24px; padding: 36px 32px; margin-bottom: 36px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <div style="font-size: 0.82rem; color: var(--purple-glow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
+            Feature #1 & #2: Autonomous AI Workspace
+          </div>
+          <h1 style="font-size: 2.2rem; font-family: var(--font-heading); color: #FFF; margin-bottom: 8px;">
+            Forge Your Personalized <span style="color: var(--purple-glow);">Career Roadmap</span>
+          </h1>
+          <p style="color: rgba(255,255,255,0.75); font-size: 1.05rem; max-width: 620px;">
+            Type your existing skills and choose a target career role from the curated dropdown list below to generate your roadmap and diagnostic audit.
+          </p>
+        </div>
+      </div>
+
+      <!-- FEATURE #1 GENERATOR FORM WITH TARGET ROLE DROPDOWN -->
+      <form id="dashboardGenForm" style="margin-top: 28px;">
+        <div style="display: grid; grid-template-columns: 1fr 1.1fr auto; gap: 12px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.18); padding: 10px 12px 10px 20px; border-radius: var(--r-full); box-shadow: 0 16px 36px rgba(0,0,0,0.4);">
+          <input type="text" id="dashSkillsInput" placeholder="Current Skills (e.g. HTML, JS, Python)" style="background: transparent; border: none; color: #FFF; font-size: 0.95rem; outline: none; width: 100%;">
+          
+          <!-- TARGET ROLE DROPDOWN MENU -->
+          <select id="dashRoleInput" class="role-select-dropdown" required>
+            <option value="" disabled selected>Select Target Career Role...</option>
+            <option value="Full-Stack Developer (MERN / PERN)">Full-Stack Developer (MERN / PERN)</option>
+            <option value="Senior React & Frontend Engineer">Senior React & Frontend Engineer</option>
+            <option value="Backend & Cloud API Architect">Backend & Cloud API Architect</option>
+            <option value="Data Analyst & AI Engineer">Data Analyst & AI Engineer</option>
+            <option value="DevOps & Kubernetes Engineer">DevOps & Kubernetes Engineer</option>
+            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+            <option value="Technical Product Manager">Technical Product Manager</option>
+          </select>
+
+          <button type="submit" class="btn-pill btn-purple" style="white-space: nowrap; padding: 12px 24px; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+            <span>Forge AI Roadmap</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- WORKSPACE RESULTS CONTAINER -->
+    <div id="dashboardWorkspace">
+      <div style="background: rgba(24, 24, 29, 0.6); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 24px; padding: 60px 20px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 12px; color: var(--purple-glow);">
+          <i data-lucide="map" style="width: 44px; height: 44px;"></i>
+        </div>
+        <h3 style="color: #FFF; font-size: 1.3rem; margin-bottom: 8px;">No Active Roadmap Generated Yet</h3>
+        <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; max-width: 480px; margin: 0 auto 24px;">
+          Select your target role above and click <strong>"Forge AI Roadmap"</strong> to generate your custom trajectory.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Firebase Web SDK v10 CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT3Y2VlxtYKi5hMBXgXnrk0IScPMvD5sc",
+      authDomain: "skillforge-ai-3674f.firebaseapp.com",
+      projectId: "skillforge-ai-3674f",
+      storageBucket: "skillforge-ai-3674f.firebasestorage.app",
+      messagingSenderId: "313873956489",
+      appId: "1:313873956489:web:f16f4edc9c859013c01058",
+      measurementId: "G-MLYLR93BV5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    function updateProfileUI(profile) {
+      const nameSpan = document.getElementById('userNameSpan');
+      const avatarImg = document.getElementById('userAvatarImg');
+      const providerPill = document.getElementById('userProviderPill');
+      
+      if (nameSpan && profile.name) {
+        nameSpan.textContent = profile.name;
+        nameSpan.title = profile.email || profile.name;
+      }
+      if (avatarImg && profile.photoURL) {
+        avatarImg.src = profile.photoURL;
+      }
+      if (providerPill && profile.authProvider) {
+        providerPill.textContent = profile.authProvider;
+      }
+    }
+
+    // 1. Instant local cache load
+    const cachedUserStr = localStorage.getItem('user');
+    if (cachedUserStr) {
+      try {
+        const cachedUser = JSON.parse(cachedUserStr);
+        updateProfileUI(cachedUser);
+      } catch (e) {}
+    }
+
+    // 2. Real-time Firebase Sync with high precision Google profile extraction
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+        const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+        const exactEmail = user.email || pData.email || '';
+        let exactPhoto = user.photoURL || pData.photoURL;
+
+        if (exactPhoto && exactPhoto.includes('googleusercontent.com')) {
+          exactPhoto = exactPhoto.replace(/=s\d+(-c)?/g, '=s400-c');
+        } else if (!exactPhoto) {
+          exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=7C3AED&color=ffffff&bold=true&rounded=true&size=256`;
+        }
+
+        const isGoogle = user.providerData?.some(p => p.providerId === 'google.com');
+        const isGithub = user.providerData?.some(p => p.providerId === 'github.com');
+        const providerLabel = isGoogle ? 'Google' : isGithub ? 'GitHub' : 'Account';
+
+        const profile = {
+          uid: user.uid,
+          name: exactName,
+          displayName: exactName,
+          email: exactEmail,
+          photoURL: exactPhoto,
+          authProvider: providerLabel,
+          lastLogin: new Date().toISOString()
+        };
+        localStorage.setItem('user', JSON.stringify(profile));
+        updateProfileUI(profile);
+      } else {
+        const local = localStorage.getItem('user');
+        if (!local) {
+          window.location.href = 'login.html';
+        }
+      }
+    });
+
+    // 3. Global Sign Out Function
+    window.handleSignOut = async function() {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error("SignOut err:", e);
+      }
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    };
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>
