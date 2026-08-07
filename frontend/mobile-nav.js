@@ -34,14 +34,11 @@
           <i data-lucide="menu" style="width: 22px; height: 22px;"></i>
         </button>
         <a href="dashboard.html" class="mobile-header-logo" title="SkillForge AI">
-          <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+          <svg width="26" height="26" viewBox="0 0 40 40" fill="none">
             <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#A855F7"/>
             <path d="M8 20L18 28L28 20" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
           </svg>
         </a>
-        <div class="mobile-header-avatar-wrap" id="mobileHeaderAvatarWrap" onclick="window.location.href='profile.html'" title="Profile">
-          <img id="mobileHeaderAvatarImg" src="https://ui-avatars.com/api/?name=User&background=7C3AED&color=FFFFFF&bold=true&rounded=true" alt="Avatar">
-        </div>
       `;
       document.body.prepend(topHeader);
     }

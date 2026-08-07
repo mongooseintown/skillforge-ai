@@ -69,23 +69,12 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    padding: 6px;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
   }
-
-  .mobile-header-avatar-wrap {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1.5px solid rgba(124, 58, 237, 0.6);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .mobile-header-avatar-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  .mobile-header-logo:active {
+    transform: scale(0.92);
   }
 
   /* ── 3. MOBILE SLIDE-OUT DRAWER & BACKDROP ── */
