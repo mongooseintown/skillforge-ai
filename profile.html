@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>User Profile — SkillForge AI</title>
+  <meta name="description" content="SkillForge AI Learner Profile, Cryptographic Identity, and Credentials.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #07050E;
+      --sidebar-bg: #14141A;
+      --purple-primary: #7C3AED;
+      --purple-hover: #6D28D9;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-500: #64748B;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg-dark);
+      color: #FFFFFF;
+    }
+
+    /* ── AMBIENT BACKGROUND GLOW ── */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── APP DASHBOARD UNIFIED SHELL ── */
+    .app-dashboard-shell {
+      display: flex;
+      height: calc(100vh - 48px);
+      max-height: calc(100vh - 48px);
+      margin: 24px;
+      padding: 0;
+      gap: 0;
+      position: relative;
+      z-index: 10;
+      align-items: stretch;
+      border-radius: 36px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.75);
+      background: #FFFFFF;
+      overflow: visible;
+    }
+
+    /* ==========================================================================
+       EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL (DOCKED TO WHITE CANVAS)
+       ========================================================================== */
+    .bw-pill-nav {
+      width: 240px;
+      background: #131318;
+      border-radius: 36px 0 0 36px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 16px 28px 20px;
+      position: relative;
+      z-index: 20;
+      flex-shrink: 0;
+      transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.3s ease;
+    }
+
+    .bw-pill-nav.collapsed {
+      width: 78px;
+      padding: 28px 14px;
+      align-items: center;
+    }
+
+    /* Top Header Row */
+    .bw-pill-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      width: 100%;
+    }
+
+    .bw-logo-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .bw-logo-bubble:hover {
+      transform: scale(1.06);
+    }
+
+    .bw-toggle-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .bw-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      transform: scale(1.08);
+    }
+
+    .bw-pill-nav.collapsed .bw-toggle-btn {
+      display: none;
+    }
+
+    /* Menu Items */
+    .bw-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      flex: 1;
+      position: relative;
+    }
+
+    /* ── DYNAMIC SLIDING ACTIVE INDICATOR ── */
+    .bw-active-indicator {
+      position: absolute;
+      left: 0;
+      right: -16px;
+      height: 52px;
+      background: #FFFFFF;
+      border-radius: 24px 0 0 24px;
+      z-index: 10;
+      pointer-events: none;
+      transition: transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease;
+      opacity: 0;
+      will-change: transform, height;
+    }
+
+    /* Pure Mathematical Inverted Curves */
+    .bw-active-indicator::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 0, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-active-indicator::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 100%, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator {
+      right: 0;
+      width: 46px;
+      height: 46px;
+      left: 50%;
+      margin-left: -23px;
+      border-radius: 50%;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator::before,
+    .bw-pill-nav.collapsed .bw-active-indicator::after {
+      display: none;
+    }
+
+    .bw-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.96rem;
+      font-weight: 600;
+      transition: color 0.25s ease, transform 0.2s ease;
+      position: relative;
+      border-radius: 20px;
+      white-space: nowrap;
+      z-index: 20;
+      background: transparent !important;
+      cursor: pointer;
+    }
+
+    .bw-nav-item:hover {
+      color: #FFFFFF;
+    }
+
+    .bw-nav-item.active {
+      color: #000000 !important;
+      font-weight: 700;
+    }
+
+    .bw-nav-item.active .bw-nav-icon-wrap i,
+    .bw-nav-item.active .bw-nav-icon-wrap svg {
+      color: #000000 !important;
+      stroke: #000000 !important;
+    }
+
+    .bw-nav-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      transition: color 0.25s ease;
+    }
+
+    .bw-nav-label {
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-label {
+      display: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-item {
+      width: 46px;
+      height: 46px;
+      justify-content: center;
+      padding: 0;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
+
+    /* Bottom User Profile Section */
+    .bw-pill-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      width: 100%;
+    }
+
+    .bw-user-bubble {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .bw-user-bubble:hover {
+      transform: scale(1.08);
+      border-color: #FFFFFF;
+    }
+
+    .bw-user-bubble img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bw-logout-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #F87171;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bw-logout-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      color: #EF4444;
+      transform: scale(1.08);
+    }
+
+    .bw-pill-nav.collapsed .bw-logout-btn {
+      display: none;
+    }
+
+    /* ==========================================================================
+       RIGHT FULL-BLEED WHITE CANVAS PAGE
+       ========================================================================== */
+    .bw-white-page-canvas {
+      flex: 1;
+      background: #FFFFFF;
+      border-radius: 0 36px 36px 0;
+      height: 100%;
+      max-height: 100%;
+      padding: 32px 40px;
+      color: #0F172A;
+      position: relative;
+      z-index: 10;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Custom Scrollbar for Canvas Content */
+    .bw-white-page-canvas::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .bw-white-page-canvas::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .bw-white-page-canvas::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 999px;
+    }
+
+    /* White Canvas Header */
+    .white-canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .canvas-page-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin: 0;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .canvas-page-subtitle {
+      font-size: 0.92rem;
+      color: var(--slate-500);
+      margin: 4px 0 0 0;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #000000;
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-action-primary:hover {
+      background: #1E293B;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    /* ── PROFILE HERO CARD ── */
+    .profile-hero-card {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      border-radius: 24px;
+      padding: 28px 32px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .profile-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-left-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      z-index: 2;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #000000;
+    }
+
+    .avatar-edit-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 28px;
+      height: 28px;
+      background: #7C3AED;
+      color: #FFFFFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #0F172A;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .avatar-edit-badge:hover {
+      transform: scale(1.15);
+    }
+
+    .hero-info h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .verified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.88rem;
+      color: #94A3B8;
+      margin-top: 4px;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-right-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .sf-id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #E2E8F0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sf-id-badge:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* ── STATS METRICS GRID ── */
+    .profile-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .stat-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--slate-500);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    /* ── TABS NAVIGATION ── */
+    .profile-nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--slate-900);
+    }
+
+    .tab-btn.active {
+      color: #000000;
+      border-bottom-color: #000000;
+      font-weight: 700;
+    }
+
+    /* ── TAB CONTENT CONTAINERS ── */
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* Forms & Settings Cards */
+    .settings-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+
+    .settings-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin: 0 0 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-card-desc {
+      font-size: 0.86rem;
+      color: var(--slate-500);
+      margin: 0 0 20px 0;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      color: var(--slate-900);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: #000000;
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Credentials List */
+    .credentials-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cred-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .cred-item:hover {
+      background: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .cred-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cred-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #0F172A;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cred-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin: 0;
+    }
+
+    .cred-id {
+      font-size: 0.8rem;
+      color: var(--slate-500);
+      font-family: 'JetBrains Mono', monospace;
+      margin: 2px 0 0 0;
+    }
+
+    .btn-verify-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-300);
+      border-radius: 8px;
+      color: var(--slate-900);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-verify-link:hover {
+      background: #000000;
+      color: #FFFFFF;
+      border-color: #000000;
+    }
+
+    /* ── CAREER PATH SELECTION ── */
+    .career-select-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .career-select-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .career-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--slate-50);
+      border: 1.5px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 13px 44px 13px 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--slate-900);
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .career-select:hover {
+      border-color: var(--slate-300);
+    }
+
+    .career-select:focus {
+      border-color: var(--purple-primary);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .career-select:disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+      background: #F1F5F9;
+      color: var(--slate-700);
+    }
+
+    .career-select-wrap .career-chevron {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+      pointer-events: none;
+    }
+
+    .btn-lock-career {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 13px 24px;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .btn-lock-career:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+    }
+
+    .btn-lock-career:active {
+      transform: translateY(0);
+    }
+
+    /* Locked confirmation banner */
+    .career-locked-banner {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
+      border: 1.5px solid #A7F3D0;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-top: 18px;
+    }
+
+    .career-locked-banner.show {
+      display: flex;
+    }
+
+    .career-locked-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #10B981;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .career-locked-text h4 {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #065F46;
+    }
+
+    .career-locked-text p {
+      margin: 2px 0 0 0;
+      font-size: 0.84rem;
+      color: #047857;
+    }
+
+    .career-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: #92400E;
+      line-height: 1.5;
+    }
+
+    .career-note.hide {
+      display: none;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #0F172A;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .profile-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-hero-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-right-actions {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ambient-bg"></div>
+
+  <!-- UNIFIED APPLICATION SHELL -->
+  <div class="app-dashboard-shell">
+
+    <!-- EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL -->
+    <aside class="bw-pill-nav" id="bwPillNav">
+
+      <!-- Top Header Row -->
+      <div class="bw-pill-header">
+        <a href="index.html" class="bw-logo-bubble" title="SkillForge AI">
+          <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+            <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#FFFFFF" />
+            <path d="M8 20L18 28L28 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </a>
+        <button class="bw-toggle-btn" id="bwNavToggleBtn" onclick="toggleBwNav()" title="Toggle Menu">
+          <i data-lucide="chevron-left" id="bwToggleIcon" style="width: 14px; height: 14px;"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Menu Items -->
+      <nav class="bw-menu-list" id="bwMenuList">
+        <!-- Dynamic Sliding Active Indicator -->
+        <div class="bw-active-indicator" id="bwActiveIndicator"></div>
+
+        <!-- Item 1: Home Landing -->
+        <a href="index.html" class="bw-nav-item" data-nav="home" title="Landing Page">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="home" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Home</span>
+        </a>
+
+        <!-- Item 2: Dashboard -->
+        <a href="dashboard.html" class="bw-nav-item" data-nav="dashboard" title="Learner Dashboard">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="layout-dashboard" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Dashboard</span>
+        </a>
+
+        <!-- Item 3: Profile (Active - Merged with White Canvas) -->
+        <a href="profile.html" class="bw-nav-item active" data-nav="profile" title="User Profile">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="user" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Profile</span>
+        </a>
+
+        <!-- Item 4: Verify & Credentials -->
+        <a href="verify.html" class="bw-nav-item" data-nav="verify" title="Certificate Verification">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="shield-check" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Verify</span>
+        </a>
+
+        <!-- Item 5: Projects -->
+        <a href="projects.html" class="bw-nav-item" data-nav="projects" title="My Projects">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="folder-code" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Projects</span>
+        </a>
+
+        <!-- Item 6: Theoretical Roadmap -->
+        <a href="theoretical-roadmap.html" class="bw-nav-item" data-nav="theoretical-roadmap"
+          title="Theoretical Roadmap">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="map" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Theoretical Roadmap</span>
+        </a>
+
+        <!-- Item 7: Jobs -->
+        <a href="jobs.html" class="bw-nav-item" data-nav="jobs" title="Career & Job Board">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="briefcase" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Jobs</span>
+        </a>
+      </nav>
+
+      <!-- Bottom User / Logout Section -->
+      <div class="bw-pill-bottom">
+        <div class="bw-user-bubble" id="bwUserAvatarWrap" onclick="window.location.href='profile.html'"
+          title="User Profile">
+          <img id="bwUserImg"
+            src="https://ui-avatars.com/api/?name=User&background=FFFFFF&color=000000&bold=true&rounded=true"
+            alt="Avatar">
+        </div>
+        <button class="bw-logout-btn" onclick="handleSignOut()" title="Sign Out">
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT FULL-BLEED WHITE CANVAS PAGE -->
+    <main class="bw-white-page-canvas" id="profileWorkspace">
+
+      <!-- White Canvas Header -->
+      <div class="white-canvas-header">
+        <div class="header-left">
+          <h1 class="canvas-page-title">
+            <i data-lucide="user-check" style="width: 28px; height: 28px; color: #000000;"></i>
+            User Profile & Account
+          </h1>
+          <p class="canvas-page-subtitle">Manage your personal credentials, cryptographic identity, and learning
+            progress.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-action-primary" onclick="saveProfileChanges()">
+            <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Hero Card -->
+      <div class="profile-hero-card">
+        <div class="hero-left-wrap">
+          <div class="avatar-wrapper">
+            <img id="profileCardAvatar"
+              src="https://ui-avatars.com/api/?name=Learner&background=FFFFFF&color=000000&bold=true&rounded=true&size=256"
+              alt="Avatar">
+            <div class="avatar-edit-badge" onclick="triggerAvatarUpload()" title="Change Avatar">
+              <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+            </div>
+            <input type="file" id="avatarFileInput" accept="image/*" style="display: none;"
+              onchange="handleAvatarFile(event)">
+          </div>
+          <div class="hero-info">
+            <h2>
+              <span id="heroDisplayName">Learner</span>
+              <span class="verified-pill">
+                <i data-lucide="shield-check" style="width: 13px; height: 13px;"></i>
+                Verified Identity
+              </span>
+            </h2>
+            <div class="hero-meta">
+              <div class="hero-meta-item">
+                <i data-lucide="mail" style="width: 15px; height: 15px;"></i>
+                <span id="heroDisplayEmail">learner@skillforge.ai</span>
+              </div>
+              <div class="hero-meta-item">
+                <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+                <span>Member since August 2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right-actions">
+          <div class="sf-id-badge" onclick="copySkillForgeId()" title="Click to Copy">
+            <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+            <span id="displaySfId">SF-USR-9920A4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Metrics Grid -->
+      <div class="profile-stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-box" style="background: #EEF2FF; color: #4F46E5;">
+            <i data-lucide="award" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div class="stat-val">3</div>
+            <div class="stat-label">Verified Certs</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-box" style="background: #F0FDF4; color: #16A34A;">
+            <i data-lucide="zap" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div class="stat-val">14,850</div>
+            <div class="stat-label">Skill Points (XP)</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-box" style="background: #FFF7ED; color: #EA580C;">
+            <i data-lucide="flame" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div class="stat-val">24 Days</div>
+            <div class="stat-label">Learning Streak</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-box" style="background: #FAF5FF; color: #9333EA;">
+            <i data-lucide="shield" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div class="stat-val">100%</div>
+            <div class="stat-label">Cryptographic Trust</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Tabs -->
+      <div class="profile-nav-tabs">
+        <button class="tab-btn active" onclick="switchProfileTab('personal', this)">
+          <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+          Personal Information
+        </button>
+        <button class="tab-btn" onclick="switchProfileTab('career', this)">
+          <i data-lucide="map" style="width: 16px; height: 16px;"></i>
+          Career Path
+        </button>
+        <button class="tab-btn" onclick="switchProfileTab('credentials', this)">
+          <i data-lucide="award" style="width: 16px; height: 16px;"></i>
+          Earned Credentials & Certs
+        </button>
+        <button class="tab-btn" onclick="switchProfileTab('security', this)">
+          <i data-lucide="lock" style="width: 16px; height: 16px;"></i>
+          Security & Keys
+        </button>
+      </div>
+
+      <!-- TAB 1: PERSONAL INFORMATION -->
+      <div class="tab-pane active" id="tab-personal">
+        <div class="settings-card">
+          <h3 class="settings-card-title">
+            <i data-lucide="edit-3" style="width: 18px; height: 18px;"></i>
+            General Profile Details
+          </h3>
+          <p class="settings-card-desc">Update your public profile info and how it appears on your verified
+            certificates.</p>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="inputFullName" class="form-control" placeholder="Your full legal name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address (Primary)</label>
+              <input type="email" id="inputEmail" class="form-control" readonly
+                style="opacity: 0.75; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Professional Headline / Role</label>
+              <input type="text" id="inputHeadline" class="form-control" placeholder="e.g. Senior AI Systems Engineer">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Location / Timezone</label>
+              <input type="text" id="inputLocation" class="form-control" placeholder="e.g. Dhaka, Bangladesh (UTC+6)">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label class="form-label">Bio / About You</label>
+              <textarea id="inputBio" class="form-control"
+                placeholder="Brief summary of your learning journey and tech stack..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: CAREER PATH SELECTION -->
+      <div class="tab-pane" id="tab-career">
+        <div class="settings-card">
+          <h3 class="settings-card-title">
+            <i data-lucide="route" style="width: 18px; height: 18px;"></i>
+            Select Your Career Path
+          </h3>
+          <p class="settings-card-desc">Choose the career track you want to pursue. Once locked, a personalized
+            Theoretical Roadmap is generated for you and cannot be changed.</p>
+
+          <div class="career-select-row">
+            <div class="form-group" style="flex: 1; min-width: 240px;">
+              <label class="form-label">Career Track</label>
+              <div class="career-select-wrap">
+                <select class="career-select" id="careerSelect">
+                  <option value="" disabled selected>— Choose a career path —</option>
+                  <option value="mern">Full-Stack [MERN]</option>
+                  <option value="ml">Machine Learning</option>
+                  <option value="ds">Data Science</option>
+                  <option value="gamedev">Game Development</option>
+                </select>
+                <i data-lucide="chevron-down" class="career-chevron" style="width: 18px; height: 18px;"></i>
+              </div>
+            </div>
+            <button class="btn-lock-career" id="lockCareerBtn" onclick="lockCareerPath()">
+              <i data-lucide="lock" style="width: 16px; height: 16px;"></i>
+              <span>Lock &amp; Generate Roadmap</span>
+            </button>
+          </div>
+
+          <div class="career-note" id="careerNote">
+            <i data-lucide="alert-triangle" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px;"></i>
+            <span>Important: Your career selection is permanent. After locking, the option will be disabled and you
+              won't be able to select a different career path.</span>
+          </div>
+
+          <div class="career-locked-banner" id="careerLockedBanner">
+            <div class="career-locked-icon">
+              <i data-lucide="check-circle" style="width: 22px; height: 22px;"></i>
+            </div>
+            <div class="career-locked-text">
+              <h4>Career Path Locked: <span id="lockedCareerName">—</span></h4>
+              <p>Your Theoretical Roadmap has been generated. Visit the Theoretical Roadmap page to view your learning
+                path.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CREDENTIALS & CERTIFICATES -->
+      <div class="tab-pane" id="tab-credentials">
+        <div class="settings-card">
+          <h3 class="settings-card-title">
+            <i data-lucide="file-check" style="width: 18px; height: 18px;"></i>
+            Verified Certificates on Cryptographic Ledger
+          </h3>
+          <p class="settings-card-desc">Your tamper-proof SkillForge credentials verifiable via QR and SHA-256
+            signatures.</p>
+
+          <div class="credentials-list">
+            <div class="cred-item">
+              <div class="cred-left">
+                <div class="cred-icon-wrap">
+                  <i data-lucide="code-2" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                  <h4 class="cred-title">Full-Stack AI Architecture & Production Systems</h4>
+                  <p class="cred-id">ID: SF-CERT-8F92A10B • Issued: August 2026</p>
+                </div>
+              </div>
+              <a href="verify.html?cert=SF-CERT-8F92A10B" class="btn-verify-link">
+                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                View Certificate
+              </a>
+            </div>
+
+            <div class="cred-item">
+              <div class="cred-left">
+                <div class="cred-icon-wrap" style="background: #7C3AED;">
+                  <i data-lucide="cpu" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                  <h4 class="cred-title">Deep Learning & LLM Prompt Engineering Specialist</h4>
+                  <p class="cred-id">ID: SF-CERT-4491D22E • Issued: July 2026</p>
+                </div>
+              </div>
+              <a href="verify.html?cert=SF-CERT-4491D22E" class="btn-verify-link">
+                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                View Certificate
+              </a>
+            </div>
+
+            <div class="cred-item">
+              <div class="cred-left">
+                <div class="cred-icon-wrap" style="background: #059669;">
+                  <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                  <h4 class="cred-title">Cryptographic Security & Verification Protocols</h4>
+                  <p class="cred-id">ID: SF-CERT-7730B91A • Issued: June 2026</p>
+                </div>
+              </div>
+              <a href="verify.html?cert=SF-CERT-7730B91A" class="btn-verify-link">
+                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                View Certificate
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: SECURITY & KEYS -->
+      <div class="tab-pane" id="tab-security">
+        <div class="settings-card">
+          <h3 class="settings-card-title">
+            <i data-lucide="key" style="width: 18px; height: 18px;"></i>
+            Cryptographic Keys & Identity Security
+          </h3>
+          <p class="settings-card-desc">Manage public verification keys and authentication security.</p>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">ECDSA Public Verification Key</label>
+            <input type="text" class="form-control"
+              style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;"
+              value="0x892F810C731A8B429188049102BBA10928CF3349182390" readonly>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Authentication Provider</label>
+            <input type="text" class="form-control" value="Google OAuth 2.0 / Firebase Security" readonly>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastMessage" class="toast-msg">
+    <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10B981;"></i>
+    <span id="toastText">Profile changes saved successfully!</span>
+  </div>
+
+  <!-- Firebase Web SDK v10 CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDummyKeyForSkillForgeDemoProj892",
+      authDomain: "skillforge-ai.firebaseapp.com",
+      projectId: "skillforge-ai",
+      storageBucket: "skillforge-ai.appspot.com",
+      messagingSenderId: "1029384756",
+      appId: "1:1029384756:web:987a6b5c4d3e2f10"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+        const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+        const exactEmail = user.email || pData.email || '';
+        let exactPhoto = user.photoURL || pData.photoURL;
+
+        if (exactPhoto && exactPhoto.includes('googleusercontent.com')) {
+          exactPhoto = exactPhoto.replace(/=s\d+(-c)?/g, '=s400-c');
+        } else if (!exactPhoto) {
+          exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=FFFFFF&color=000000&bold=true&rounded=true&size=256`;
+        }
+
+        const profile = {
+          uid: user.uid,
+          name: exactName,
+          email: exactEmail,
+          photoURL: exactPhoto
+        };
+        localStorage.setItem('user', JSON.stringify(profile));
+        populateProfile(profile);
+        applyCareerLockedState();
+      } else {
+        const local = localStorage.getItem('user');
+        if (local) {
+          try {
+            populateProfile(JSON.parse(local));
+            applyCareerLockedState();
+          } catch (e) { }
+        } else {
+          window.location.href = 'login.html';
+        }
+      }
+    });
+
+
+    window.handleSignOut = async function () {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error("SignOut err:", e);
+      }
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    };
+  </script>
+
+  <script>
+    function populateProfile(profile) {
+      if (!profile) return;
+      const name = profile.name || 'Learner';
+      const email = profile.email || 'learner@skillforge.ai';
+      const photo = profile.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FFFFFF&color=000000&bold=true&rounded=true&size=256`;
+
+      document.getElementById('heroDisplayName').textContent = name;
+      document.getElementById('heroDisplayEmail').textContent = email;
+      document.getElementById('profileCardAvatar').src = photo;
+      document.getElementById('bwUserImg').src = photo;
+
+      document.getElementById('inputFullName').value = name;
+      document.getElementById('inputEmail').value = email;
+
+      const savedHeadline = localStorage.getItem('sf_headline') || 'Full-Stack AI Developer & Cryptographic Learner';
+      const savedLocation = localStorage.getItem('sf_location') || 'Dhaka, Bangladesh';
+      const savedBio = localStorage.getItem('sf_bio') || 'Passionate engineer exploring decentralized identity, full-stack AI applications, and cryptographic proofs of learning.';
+
+      document.getElementById('inputHeadline').value = savedHeadline;
+      document.getElementById('inputLocation').value = savedLocation;
+      document.getElementById('inputBio').value = savedBio;
+
+      const sfId = profile.uid ? 'SF-USR-' + profile.uid.substring(0, 6).toUpperCase() : 'SF-USR-9920A4';
+      document.getElementById('displaySfId').textContent = sfId;
+    }
+
+    /* ── CAREER PATH LOCK LOGIC ── */
+    const CAREER_LABELS = {
+      mern: 'Full-Stack [MERN]',
+      ml: 'Machine Learning',
+      ds: 'Data Science',
+      gamedev: 'Game Development'
+    };
+
+    function lockCareerPath() {
+      const select = document.getElementById('careerSelect');
+      const chosen = select ? select.value : '';
+
+      if (!chosen) {
+        showToast('Please choose a career path first.');
+        return;
+      }
+
+      // Persist the selected career permanently
+      localStorage.setItem('sf_career', chosen);
+      localStorage.setItem('sf_career_locked', 'true');
+
+      applyCareerLockedState();
+      showToast('Career path locked! Your roadmap has been generated.');
+    }
+
+    function applyCareerLockedState() {
+      const locked = localStorage.getItem('sf_career_locked') === 'true';
+      const chosen = localStorage.getItem('sf_career') || '';
+      const select = document.getElementById('careerSelect');
+      const lockBtn = document.getElementById('lockCareerBtn');
+      const note = document.getElementById('careerNote');
+      const banner = document.getElementById('careerLockedBanner');
+      const lockedName = document.getElementById('lockedCareerName');
+
+      if (!select) return;
+
+      if (chosen) {
+        select.value = chosen;
+      }
+
+      if (locked && chosen) {
+        // Disable the dropdown and lock button permanently
+        select.disabled = true;
+        if (lockBtn) {
+          lockBtn.disabled = true;
+          lockBtn.style.opacity = '0.5';
+          lockBtn.style.cursor = 'not-allowed';
+          lockBtn.style.pointerEvents = 'none';
+          lockBtn.querySelector('span').textContent = 'Career Path Locked';
+        }
+        if (note) note.classList.add('hide');
+        if (banner) banner.classList.add('show');
+        if (lockedName) lockedName.textContent = CAREER_LABELS[chosen] || chosen;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+
+    function saveProfileChanges() {
+      const newName = document.getElementById('inputFullName').value.trim() || 'Learner';
+      const newHeadline = document.getElementById('inputHeadline').value.trim();
+      const newLocation = document.getElementById('inputLocation').value.trim();
+      const newBio = document.getElementById('inputBio').value.trim();
+
+      localStorage.setItem('sf_headline', newHeadline);
+      localStorage.setItem('sf_location', newLocation);
+      localStorage.setItem('sf_bio', newBio);
+
+      let currentProfile = {};
+      try {
+        currentProfile = JSON.parse(localStorage.getItem('user')) || {};
+      } catch (e) { }
+
+      currentProfile.name = newName;
+      localStorage.setItem('user', JSON.stringify(currentProfile));
+
+      document.getElementById('heroDisplayName').textContent = newName;
+      showToast('Profile updated & synchronized successfully!');
+    }
+
+    function switchProfileTab(tabKey, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const targetPane = document.getElementById('tab-' + tabKey);
+      if (targetPane) targetPane.classList.add('active');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function triggerAvatarUpload() {
+      document.getElementById('avatarFileInput').click();
+    }
+
+    function handleAvatarFile(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const newPhoto = e.target.result;
+          document.getElementById('profileCardAvatar').src = newPhoto;
+          document.getElementById('bwUserImg').src = newPhoto;
+
+          let currentProfile = {};
+          try {
+            currentProfile = JSON.parse(localStorage.getItem('user')) || {};
+          } catch (err) { }
+
+          currentProfile.photoURL = newPhoto;
+          localStorage.setItem('user', JSON.stringify(currentProfile));
+          showToast('Profile picture updated!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function copySkillForgeId() {
+      const idText = document.getElementById('displaySfId').textContent;
+      navigator.clipboard.writeText(idText);
+      showToast('SkillForge ID copied: ' + idText);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      const text = document.getElementById('toastText');
+      text.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function updateActiveIndicator(animate = true) {
+      const menuList = document.getElementById('bwMenuList');
+      const indicator = document.getElementById('bwActiveIndicator');
+      if (!menuList || !indicator) return;
+
+      const activeItem = menuList.querySelector('.bw-nav-item.active');
+      if (!activeItem) {
+        indicator.style.opacity = '0';
+        return;
+      }
+
+      const menuRect = menuList.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const topOffset = itemRect.top - menuRect.top;
+      const itemHeight = itemRect.height;
+
+      if (!animate) {
+        indicator.style.transition = 'none';
+      } else {
+        indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+      }
+
+      indicator.style.transform = `translateY(${topOffset}px)`;
+      indicator.style.height = `${itemHeight}px`;
+      indicator.style.opacity = '1';
+
+      if (!animate) {
+        void indicator.offsetHeight;
+        requestAnimationFrame(() => {
+          indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+        });
+      }
+    }
+
+    // Attach smooth click handling to nav items
+    document.querySelectorAll('.bw-nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (item.classList.contains('active')) return;
+
+        document.querySelectorAll('.bw-nav-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        updateActiveIndicator(true);
+
+        if (href && href !== '#' && !href.startsWith('javascript:')) {
+          e.preventDefault();
+          setTimeout(() => {
+            window.location.href = href;
+          }, 240);
+        }
+      });
+    });
+
+    function toggleBwNav() {
+      const nav = document.getElementById('bwPillNav');
+      nav.classList.toggle('collapsed');
+      setTimeout(() => updateActiveIndicator(false), 360);
+    }
+
+    window.addEventListener('resize', () => updateActiveIndicator(false));
+    document.addEventListener('DOMContentLoaded', () => updateActiveIndicator(false));
+    window.addEventListener('load', () => {
+      updateActiveIndicator(false);
+    });
+
+    // Immediate instant pre-render
+    updateActiveIndicator(false);
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+
+</html>

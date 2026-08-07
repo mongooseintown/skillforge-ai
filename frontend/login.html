@@ -501,8 +501,27 @@
     }
     .foot a:hover { color: #A78BFA; text-decoration: underline; }
 
+    .top-logo-link {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFF;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      z-index: 50;
+      transition: opacity 0.2s;
+    }
+    .top-logo-link:hover {
+      opacity: 0.8;
+    }
+
     @media (max-width: 480px) {
       .card { padding: 28px 22px 24px; }
+      .top-logo-link { top: 20px; left: 20px; }
     }
   </style>
 </head>
@@ -511,6 +530,13 @@
 <canvas id="celestialCanvas"></canvas>
 
 <div class="page-wrap">
+  <a href="index.html" class="top-logo-link">
+    <svg style="width: 24px; height: 24px;" viewBox="0 0 40 40" fill="none">
+      <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+      <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>SkillForge AI</span>
+  </a>
   
   <div class="card-flipper-container">
     <div class="card-flipper" id="cardFlipper">

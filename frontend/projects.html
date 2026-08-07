@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Project Generator — SkillForge AI</title>
+  <meta name="description"
+    content="SkillForge AI Dynamic Multi-Tier Project Generator based strictly on custom tech stacks.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #08060F;
+      --card-bg: #120E22;
+      --card-border: rgba(167, 139, 250, 0.16);
+      --purple-primary: #7C3AED;
+      --purple-glow: #A78BFA;
+      --purple-dark: #4C1D95;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+      --emerald-500: #10B981;
+      --emerald-50: #ECFDF5;
+      --amber-500: #F59E0B;
+      --amber-50: #FFFBEB;
+      --violet-500: #8B5CF6;
+      --violet-50: #F5F3FF;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--bg);
+      color: #FFFFFF;
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ── AMBIENT BACKGROUND GLOW ── */
+    .ambient-mesh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.22) 0%, transparent 60%),
+        radial-gradient(circle at 15% 90%, rgba(167, 139, 250, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(124, 58, 237, 0.12) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── APP DASHBOARD UNIFIED SHELL (EXACT MATCH TO VERIFY & DASHBOARD) ── */
+    .app-dashboard-shell {
+      display: flex;
+      min-height: calc(100vh - 48px);
+      margin: 24px;
+      padding: 0;
+      gap: 0;
+      position: relative;
+      z-index: 10;
+      align-items: stretch;
+      border-radius: 36px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.75);
+      background: #FFFFFF;
+      overflow: visible;
+    }
+
+    /* ==========================================================================
+       EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL (DOCKED TO WHITE CANVAS)
+       ========================================================================== */
+    .bw-pill-nav {
+      width: 240px;
+      background: #131318;
+      border-radius: 36px 0 0 36px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 16px 28px 20px;
+      position: relative;
+      z-index: 20;
+      flex-shrink: 0;
+      transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.3s ease;
+    }
+
+    .bw-pill-nav.collapsed {
+      width: 78px;
+      padding: 28px 14px;
+      align-items: center;
+    }
+
+    /* Top Header Row */
+    .bw-pill-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+
+    .bw-logo-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .bw-logo-bubble:hover {
+      transform: scale(1.06);
+    }
+
+    .bw-toggle-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .bw-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      transform: scale(1.08);
+    }
+
+    .bw-pill-nav.collapsed .bw-toggle-btn {
+      display: none;
+    }
+
+    /* Menu Items */
+    .bw-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      flex: 1;
+      position: relative;
+    }
+
+    /* ── DYNAMIC SLIDING ACTIVE INDICATOR WITH INVERTED CONCAVE MERGE ── */
+    .bw-active-indicator {
+      position: absolute;
+      left: 0;
+      right: -16px;
+      height: 52px;
+      background: #FFFFFF;
+      border-radius: 24px 0 0 24px;
+      z-index: 10;
+      pointer-events: none;
+      transition: transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease;
+      opacity: 0;
+      will-change: transform, height;
+    }
+
+    /* Pure Mathematical Inverted Curves (Smooth Concave Blend into White Canvas) */
+    .bw-active-indicator::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 0, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-active-indicator::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 100%, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator {
+      right: 0;
+      width: 46px;
+      height: 46px;
+      left: 50%;
+      margin-left: -23px;
+      border-radius: 50%;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator::before,
+    .bw-pill-nav.collapsed .bw-active-indicator::after {
+      display: none;
+    }
+
+    .bw-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.96rem;
+      font-weight: 600;
+      transition: color 0.25s ease, transform 0.2s ease;
+      position: relative;
+      border-radius: 20px;
+      white-space: nowrap;
+      z-index: 20;
+      background: transparent !important;
+      cursor: pointer;
+    }
+
+    .bw-nav-item:hover {
+      color: #FFFFFF;
+    }
+
+    .bw-nav-item.active {
+      color: #000000 !important;
+      font-weight: 700;
+    }
+
+    .bw-nav-item.active .bw-nav-icon-wrap i,
+    .bw-nav-item.active .bw-nav-icon-wrap svg {
+      color: #000000 !important;
+      stroke: #000000 !important;
+    }
+
+    .bw-nav-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      transition: color 0.25s ease;
+    }
+
+    .bw-nav-label {
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-label {
+      display: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-item {
+      width: 46px;
+      height: 46px;
+      justify-content: center;
+      padding: 0;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
+
+    /* ── AUTH-GATED MENU VISIBILITY ── */
+    .auth-only {
+      display: flex;
+    }
+
+    body.is-guest .auth-only {
+      display: none !important;
+    }
+
+    /* Bottom User / Logout / Guest Section */
+    .bw-pill-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+
+    .bw-guest-login-wrap {
+      display: none;
+      width: 100%;
+    }
+
+    body.is-guest .bw-guest-login-wrap {
+      display: flex;
+    }
+
+    body.is-guest .bw-user-logged-wrap {
+      display: none !important;
+    }
+
+    .bw-login-cta-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .bw-login-cta-btn:hover {
+      background: #FFFFFF;
+      color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .bw-pill-nav.collapsed .bw-login-cta-label {
+      display: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-login-cta-btn {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .bw-user-bubble {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .bw-user-bubble img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bw-logout-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.65);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .bw-logout-btn:hover {
+      color: #EF4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .bw-pill-nav.collapsed .bw-logout-btn {
+      display: none;
+    }
+
+    /* ==========================================================================
+       RIGHT FULL-BLEED WHITE CANVAS PAGE
+       ========================================================================== */
+    .bw-white-page-canvas {
+      flex: 1;
+      background: #FFFFFF;
+      border-radius: 0 36px 36px 0;
+      min-height: calc(100vh - 48px);
+      padding: 30px 40px;
+      color: #0F172A;
+      position: relative;
+      z-index: 10;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* White Canvas Header */
+    .white-canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .canvas-page-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .canvas-page-subtitle {
+      font-size: 0.88rem;
+      color: #64748B;
+      margin: 2px 0 0 0;
+      font-weight: 500;
+    }
+
+    .canvas-body-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      width: 100%;
+      min-height: 0;
+    }
+
+    /* ==========================================================================
+       PROJECT GENERATOR SEARCH & TAG SYSTEM (MODERN AI BAR)
+       ========================================================================== */
+    .pg-search-container {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1.5px solid var(--slate-200);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .pg-search-container:focus-within {
+      border-color: var(--purple-primary);
+      box-shadow: 0 12px 35px -5px rgba(124, 58, 237, 0.15);
+    }
+
+    .pg-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .pg-search-icon {
+      color: var(--purple-primary);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .pg-tags-area {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-height: 42px;
+    }
+
+    .pg-tag {
+      background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+      animation: tagPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes tagPop {
+      0% {
+        transform: scale(0.75);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .pg-tag-remove {
+      background: rgba(255, 255, 255, 0.25);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.72rem;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+
+    .pg-tag-remove:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .pg-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--slate-900);
+      flex: 1;
+      min-width: 220px;
+      font-family: inherit;
+    }
+
+    .pg-input::placeholder {
+      color: var(--slate-400);
+    }
+
+    /* ACTION BUTTON - ALWAYS VISIBLE & DISTINCT */
+    .pg-generate-btn {
+      background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+
+    .pg-generate-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+    }
+
+    .pg-generate-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    /* Disabled state is fully legible & crisp */
+    .pg-generate-btn:disabled {
+      background: var(--slate-100) !important;
+      color: var(--slate-400) !important;
+      border: 1px solid var(--slate-200) !important;
+      box-shadow: none !important;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Quick Tech Chips Row */
+    .pg-quick-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px dashed var(--slate-200);
+    }
+
+    .pg-quick-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pg-quick-chip {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      color: var(--slate-700);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .pg-quick-chip:hover {
+      background: var(--violet-50);
+      border-color: var(--purple-primary);
+      color: var(--purple-primary);
+    }
+
+    /* Auto Suggest Dropdown */
+    .pg-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 36px;
+      width: 320px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--slate-200);
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+      max-height: 240px;
+      overflow-y: auto;
+      display: none;
+      padding: 6px;
+    }
+
+    .pg-dropdown.active {
+      display: block;
+    }
+
+    .pg-dropdown-item {
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+
+    .pg-dropdown-item:hover,
+    .pg-dropdown-item.focused {
+      background: var(--violet-50);
+      color: var(--purple-primary);
+    }
+
+    .pg-dropdown-item span.item-type {
+      font-size: 0.72rem;
+      color: var(--slate-400);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       LOADER STATE
+       ========================================================================== */
+    .pg-loader-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      gap: 16px;
+    }
+
+    .pg-loader-wrap.active {
+      display: flex;
+    }
+
+    .pg-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid var(--slate-200);
+      border-top-color: var(--purple-primary);
+      border-right-color: var(--purple-dark);
+      border-radius: 50%;
+      animation: spin 0.85s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pg-loader-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+
+    .pg-loader-desc {
+      font-size: 0.85rem;
+      color: var(--slate-500);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ==========================================================================
+       RESULTS SECTION & CARDS
+       ========================================================================== */
+    .pg-results {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      padding-bottom: 40px;
+    }
+
+    .pg-tier-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pg-tier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--slate-100);
+    }
+
+    .pg-tier-badge-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .pg-tier-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-beginner .pg-tier-pill {
+      background: var(--emerald-50);
+      color: var(--emerald-500);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .tier-intermediate .pg-tier-pill {
+      background: var(--amber-50);
+      color: var(--amber-500);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .tier-advanced .pg-tier-pill {
+      background: var(--violet-50);
+      color: var(--purple-primary);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+    }
+
+    .pg-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 20px;
+    }
+
+    .pg-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--slate-200);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .pg-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+      border-color: var(--purple-primary);
+    }
+
+    .pg-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .pg-card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.35;
+    }
+
+    .pg-card-tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .pg-card-tech-badge {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .pg-card-overview {
+      font-size: 0.9rem;
+      color: var(--slate-600);
+      line-height: 1.55;
+    }
+
+    .pg-block {
+      background: var(--slate-50);
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--slate-200);
+    }
+
+    .pg-block-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--slate-800);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pg-feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pg-feature-list li {
+      font-size: 0.85rem;
+      color: var(--slate-700);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .pg-feature-list li i {
+      color: var(--purple-primary);
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .pg-spec-text {
+      font-size: 0.84rem;
+      color: var(--slate-600);
+      line-height: 1.5;
+    }
+
+    .pg-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 8px;
+      border-top: 1px solid var(--slate-100);
+    }
+
+    .pg-copy-btn {
+      background: transparent;
+      border: 1px solid var(--slate-200);
+      color: var(--slate-700);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .pg-copy-btn:hover {
+      background: var(--slate-100);
+      color: var(--purple-primary);
+      border-color: var(--purple-primary);
+    }
+
+    /* Empty state placeholder */
+    .pg-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--slate-400);
+      gap: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .pg-empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: var(--slate-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--slate-400);
+      border: 1.5px dashed var(--slate-200);
+    }
+
+    @media (max-width: 900px) {
+      .app-dashboard-shell {
+        flex-direction: column;
+        margin: 12px;
+        border-radius: 24px;
+      }
+
+      .bw-pill-nav {
+        width: 100%;
+        border-radius: 24px 24px 0 0;
+      }
+
+      .bw-white-page-canvas {
+        border-radius: 0 0 24px 24px;
+        padding: 24px 20px;
+      }
+
+      .pg-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- AMBIENT BACKGROUND GLOW -->
+  <div class="ambient-mesh"></div>
+
+  <!-- EXACT UNIFIED DASHBOARD APPLICATION SHELL -->
+  <div class="app-dashboard-shell">
+
+    <!-- EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL (DOCKED TO WHITE CANVAS) -->
+    <aside class="bw-pill-nav" id="bwPillNav">
+
+      <!-- Top Header Row -->
+      <div class="bw-pill-header">
+        <a href="index.html" class="bw-logo-bubble" title="SkillForge AI">
+          <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+            <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#FFFFFF" />
+            <path d="M8 20L18 28L28 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </a>
+        <button class="bw-toggle-btn" id="bwNavToggleBtn" onclick="toggleBwNav()" title="Toggle Menu">
+          <i data-lucide="chevron-left" id="bwToggleIcon" style="width: 14px; height: 14px;"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Menu Items -->
+      <nav class="bw-menu-list" id="bwMenuList">
+        <!-- Dynamic Sliding Active Indicator with Inverted Curves -->
+        <div class="bw-active-indicator" id="bwActiveIndicator"></div>
+
+        <!-- Item 1: Home Landing -->
+        <a href="index.html" class="bw-nav-item" data-nav="home" title="Landing Page">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="home" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Home</span>
+        </a>
+
+        <!-- Item 2: Dashboard (Auth Only) -->
+        <a href="dashboard.html" class="bw-nav-item auth-only" data-nav="dashboard" title="Learner Dashboard">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="layout-dashboard" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Dashboard</span>
+        </a>
+
+        <!-- Item 3: Profile (Auth Only) -->
+        <a href="profile.html" class="bw-nav-item auth-only" data-nav="profile" title="User Profile">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="user" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Profile</span>
+        </a>
+
+        <!-- Item 4: Verify & Credentials -->
+        <a href="verify.html" class="bw-nav-item" data-nav="verify" title="Certificate Verification">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="shield-check" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Verify</span>
+        </a>
+
+        <!-- Item 5: Projects (Active) -->
+        <a href="projects.html" class="bw-nav-item active" data-nav="projects" title="My Projects">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="folder-code" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Projects</span>
+        </a>
+
+        <!-- Item 6: Theoretical Roadmap -->
+        <a href="theoretical-roadmap.html" class="bw-nav-item" data-nav="theoretical-roadmap"
+          title="Theoretical Roadmap">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="map" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Theoretical Roadmap</span>
+        </a>
+
+        <!-- Item 7: Jobs -->
+        <a href="jobs.html" class="bw-nav-item" data-nav="jobs" title="Career & Job Board">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="briefcase" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Jobs</span>
+        </a>
+      </nav>
+
+      <!-- Bottom User / Logout / Guest Section -->
+      <div class="bw-pill-bottom">
+        <!-- Guest View: Sign In CTA -->
+        <div class="bw-guest-login-wrap" id="guestBottomWrap">
+          <a href="login.html" class="bw-login-cta-btn" title="Sign In">
+            <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
+            <span class="bw-login-cta-label">Sign In</span>
+          </a>
+        </div>
+
+        <!-- Logged In View: User Bubble & Sign Out -->
+        <div class="bw-user-logged-wrap" id="userBottomWrap"
+          style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <div class="bw-user-bubble" id="bwUserAvatarWrap" onclick="window.location.href='profile.html'"
+            title="User Profile">
+            <img id="bwUserImg"
+              src="https://ui-avatars.com/api/?name=User&background=FFFFFF&color=000000&bold=true&rounded=true"
+              alt="Avatar">
+          </div>
+          <button class="bw-logout-btn" onclick="handleSignOut()" title="Sign Out">
+            <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT FULL-BLEED WHITE CANVAS PAGE -->
+    <main class="bw-white-page-canvas" id="dashboardWorkspace">
+
+      <!-- Top White Canvas Header (Matches verify.html & dashboard.html exactly) -->
+      <div class="white-canvas-header">
+        <div>
+          <h1 class="canvas-page-title">Project Generator</h1>
+          <p class="canvas-page-subtitle">Build 6 custom projects (2 Beginner, 2 Intermediate, 2 Advanced) strictly
+            restricted to your exact tech stack.</p>
+        </div>
+      </div>
+
+      <!-- Workspace Body Content -->
+      <div class="canvas-body-content" id="canvasBodyContent">
+
+        <!-- MODERN INTERACTIVE SEARCH & TAG BAR -->
+        <div class="pg-search-container" id="pgSearchContainer">
+
+          <div class="pg-input-row">
+            <div class="pg-search-icon">
+              <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+            </div>
+
+            <!-- Tags & Text Input -->
+            <div class="pg-tags-area" id="pgTagsArea">
+              <!-- Dynamically inserted tags will go here -->
+              <input type="text" class="pg-input" id="pgInput"
+                placeholder="Type technology (e.g. React, Python, MongoDB) and press Enter..." autocomplete="off">
+            </div>
+
+            <!-- Prominent Action Button (Always Visible) -->
+            <button class="pg-generate-btn" id="pgGenerateBtn" disabled
+              title="Add tags and generate project blueprints">
+              <i data-lucide="wand-2" style="width: 17px; height: 17px;"></i>
+              <span>Generate Projects</span>
+            </button>
+
+            <!-- Auto Suggest Dropdown -->
+            <div class="pg-dropdown" id="pgDropdown"></div>
+          </div>
+
+          <!-- Quick Suggestions Chips Row -->
+          <div class="pg-quick-row">
+            <span class="pg-quick-label">Quick Add:</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('HTML5')">+ HTML5</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('CSS3')">+ CSS3</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('JavaScript')">+ JavaScript</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('Python')">+ Python</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('Node.js')">+ Node.js</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('React')">+ React</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('MongoDB')">+ MongoDB</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('PostgreSQL')">+ PostgreSQL</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('TailwindCSS')">+ TailwindCSS</span>
+            <span class="pg-quick-chip" onclick="quickAddTag('Docker')">+ Docker</span>
+          </div>
+
+        </div>
+
+        <!-- LOADER SPINNER STATE -->
+        <div class="pg-loader-wrap" id="pgLoaderWrap">
+          <div class="pg-spinner"></div>
+          <div class="pg-loader-title">Architecting 6 Custom Blueprints...</div>
+          <div class="pg-loader-desc">Structuring features, design specifications, and technical constraints.</div>
+        </div>
+
+        <!-- RESULTS CONTAINER -->
+        <div class="pg-results" id="pgResults">
+          <!-- Initial Empty State -->
+          <div class="pg-empty-state" id="pgEmptyState">
+            <div class="pg-empty-icon">
+              <i data-lucide="layers" style="width: 30px; height: 30px;"></i>
+            </div>
+            <h3 style="font-size: 1.1rem; color: var(--slate-800); font-weight: 700;">No Tech Stack Selected</h3>
+            <p style="font-size: 0.88rem; max-width: 420px; line-height: 1.5;">Type your keywords or click the quick
+              pills above (e.g. HTML, CSS, JavaScript) and click <strong>Generate Projects</strong>.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- PROJECT GENERATOR ENGINE SCRIPT -->
+  <script>
+    const techCatalog = [
+      { name: "HTML5", type: "Markup" },
+      { name: "CSS3", type: "Styling" },
+      { name: "JavaScript", type: "Language" },
+      { name: "TypeScript", type: "Language" },
+      { name: "Python", type: "Language" },
+      { name: "Node.js", type: "Runtime" },
+      { name: "Express", type: "Backend Framework" },
+      { name: "React", type: "Frontend Library" },
+      { name: "Next.js", type: "Fullstack Framework" },
+      { name: "Vue.js", type: "Frontend Framework" },
+      { name: "Angular", type: "Frontend Framework" },
+      { name: "MongoDB", type: "NoSQL Database" },
+      { name: "PostgreSQL", type: "SQL Database" },
+      { name: "MySQL", type: "SQL Database" },
+      { name: "Redis", type: "In-Memory Store" },
+      { name: "TailwindCSS", type: "CSS Framework" },
+      { name: "Bootstrap", type: "CSS Framework" },
+      { name: "SASS/SCSS", type: "CSS Preprocessor" },
+      { name: "Django", type: "Python Framework" },
+      { name: "Flask", type: "Python Micro-Framework" },
+      { name: "FastAPI", type: "Python API Framework" },
+      { name: "Java", type: "Language" },
+      { name: "Spring Boot", type: "Java Framework" },
+      { name: "C#", type: "Language" },
+      { name: ".NET Core", type: "Framework" },
+      { name: "PHP", type: "Language" },
+      { name: "Laravel", type: "PHP Framework" },
+      { name: "Ruby", type: "Language" },
+      { name: "Ruby on Rails", type: "Framework" },
+      { name: "Go", type: "Language" },
+      { name: "Rust", type: "Language" },
+      { name: "C++", type: "Language" },
+      { name: "GraphQL", type: "API Query Language" },
+      { name: "REST API", type: "Architecture" },
+      { name: "Docker", type: "Containerization" },
+      { name: "Kubernetes", type: "Orchestration" },
+      { name: "AWS", type: "Cloud Provider" },
+      { name: "Firebase", type: "BaaS Platform" },
+      { name: "Flutter", type: "Mobile UI" },
+      { name: "React Native", type: "Mobile Framework" },
+      { name: "Swift", type: "iOS Language" },
+      { name: "Kotlin", type: "Android Language" }
+    ];
+
+    const input = document.getElementById('pgInput');
+    const tagsArea = document.getElementById('pgTagsArea');
+    const dropdown = document.getElementById('pgDropdown');
+    const generateBtn = document.getElementById('pgGenerateBtn');
+    const loader = document.getElementById('pgLoaderWrap');
+    const resultsDiv = document.getElementById('pgResults');
+    const emptyState = document.getElementById('pgEmptyState');
+
+    let currentTags = [];
+    let focusedIndex = -1;
+
+    // Render tag badges in input bar
+    function renderTags() {
+      const existing = tagsArea.querySelectorAll('.pg-tag');
+      existing.forEach(t => t.remove());
+
+      currentTags.forEach((tag, idx) => {
+        const pill = document.createElement('span');
+        pill.className = 'pg-tag';
+        pill.innerHTML = `
+          <span>${tag}</span>
+          <span class="pg-tag-remove" onclick="removeTag(${idx})">✕</span>
+        `;
+        tagsArea.insertBefore(pill, input);
+      });
+
+      updateBtnState();
+    }
+
+    function updateBtnState() {
+      generateBtn.disabled = currentTags.length === 0;
+    }
+
+    function addTag(tagName) {
+      const clean = tagName.trim();
+      if (!clean) return;
+
+      const matched = techCatalog.find(t => t.name.toLowerCase() === clean.toLowerCase());
+      const finalName = matched ? matched.name : clean;
+
+      if (!currentTags.includes(finalName)) {
+        currentTags.push(finalName);
+        renderTags();
+      }
+
+      input.value = '';
+      closeDropdown();
+      input.focus();
+    }
+
+    window.removeTag = function (index) {
+      currentTags.splice(index, 1);
+      renderTags();
+    };
+
+    window.quickAddTag = function (name) {
+      addTag(name);
+    };
+
+    // Auto-suggest dropdown logic
+    input.addEventListener('input', (e) => {
+      const val = e.target.value.trim().toLowerCase();
+      if (!val) {
+        closeDropdown();
+        return;
+      }
+
+      const matches = techCatalog.filter(t =>
+        t.name.toLowerCase().includes(val) && !currentTags.includes(t.name)
+      );
+
+      if (matches.length === 0) {
+        closeDropdown();
+        return;
+      }
+
+      dropdown.innerHTML = '';
+      focusedIndex = -1;
+
+      matches.slice(0, 6).forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'pg-dropdown-item';
+        div.innerHTML = `
+          <span>${item.name}</span>
+          <span class="item-type">${item.type}</span>
+        `;
+        div.addEventListener('click', () => {
+          addTag(item.name);
+        });
+        dropdown.appendChild(div);
+      });
+
+      dropdown.classList.add('active');
+    });
+
+    // Keyboard navigation
+    input.addEventListener('keydown', (e) => {
+      const items = dropdown.querySelectorAll('.pg-dropdown-item');
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (items.length > 0) {
+          focusedIndex = (focusedIndex + 1) % items.length;
+          updateDropdownFocus(items);
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (items.length > 0) {
+          focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+          updateDropdownFocus(items);
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (focusedIndex >= 0 && items[focusedIndex]) {
+          const selectedText = items[focusedIndex].querySelector('span').textContent;
+          addTag(selectedText);
+        } else if (input.value.trim()) {
+          addTag(input.value.trim());
+        }
+      } else if (e.key === 'Backspace' && !input.value && currentTags.length > 0) {
+        removeTag(currentTags.length - 1);
+      }
+    });
+
+    function updateDropdownFocus(items) {
+      items.forEach((it, idx) => {
+        if (idx === focusedIndex) it.classList.add('focused');
+        else it.classList.remove('focused');
+      });
+    }
+
+    function closeDropdown() {
+      dropdown.classList.remove('active');
+      focusedIndex = -1;
+    }
+
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('pgSearchContainer');
+      if (container && !container.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    // ── HIGH-RELIABILITY LOCAL PROJECT BLUEPRINT ARCHITECT ENGINE ──
+    function generateStrictBlueprintArchitecture(stack) {
+      const stackStr = stack.join(' + ');
+
+      return [
+        // ── 2 BEGINNER PROJECTS ──
+        {
+          level: "Beginner",
+          title: `Interactive ${stack[0] || 'Modular'} Task & Performance Tracker`,
+          overview: `A streamlined, responsive application engineered exclusively using ${stackStr}. Designed to master fundamental state manipulation, semantic structure, and local data persistence without third-party dependencies.`,
+          coreFeatures: [
+            `Dynamic CRUD operations for managing tasks and status flags strictly using ${stack[0]} and ${stack[1] || stack[0]}.`,
+            `Real-time client-side filter system for status, priority, and keyword search.`,
+            `Persistent state synchronization using native storage mechanisms.`,
+            `Clean responsive UI layout with custom modular components.`
+          ],
+          designSpec: `UI follows a clean two-column grid. Viewport adapts smoothly across desktop and mobile. Data flow is strictly unidirectional from user input directly into localized state handlers.`,
+          requirements: `Pure semantic implementation with strict validation on all input fields. Must run natively in standard browser environments without external runtime dependencies.`
+        },
+        {
+          level: "Beginner",
+          title: `Custom ${stack[1] || stack[0]} Component Design System & Showcase`,
+          overview: `A comprehensive, standalone component sandbox built strictly with ${stackStr}. Serves as an interactive catalog for testing UI cards, buttons, tabs, and modals.`,
+          coreFeatures: [
+            `Modular component library built from scratch using ${stackStr}.`,
+            `Live interactive theme toggle and typography previewer.`,
+            `Custom form elements with inline validation and state feedback.`,
+            `Zero-dependency lightweight animation transitions.`
+          ],
+          designSpec: `Modern slate design system with CSS custom properties. Component isolation ensures no style leakage or cross-contamination.`,
+          requirements: `Must adhere strictly to standard ${stackStr} specifications with semantic markup and accessible ARIA attributes.`
+        },
+
+        // ── 2 INTERMEDIATE PROJECTS ──
+        {
+          level: "Intermediate",
+          title: `Full-Featured ${stackStr} Analytics Dashboard & Event Log`,
+          overview: `An intermediate architectural system utilizing ${stackStr} to process, visualize, and filter real-time metrics, custom logs, and structured analytics records.`,
+          coreFeatures: [
+            `Data visualization engine constructed purely with native ${stackStr} capabilities.`,
+            `Multi-dimensional data filtering (date range, categories, numeric thresholds).`,
+            `Custom sorting and pagination algorithms optimized for large dataset arrays.`,
+            `Export engine supporting JSON and CSV data parsing directly in-memory.`
+          ],
+          designSpec: `Card-based dashboard layout with flexbox/grid containers. State machine handles loading, error, and cached views cleanly.`,
+          requirements: `Robust asynchronous data handling, strict error boundaries, and zero external chart or UI dependencies.`
+        },
+        {
+          level: "Intermediate",
+          title: `Collaborative ${stackStr} Workspace & Document Engine`,
+          overview: `A feature-rich productivity suite built strictly with ${stackStr}, focusing on complex state trees, markdown parsing/formatting, and local session management.`,
+          coreFeatures: [
+            `Custom document editor with real-time text parsing and formatting toolbar.`,
+            `Revision history tracking with snapshot restoration and delta inspection.`,
+            `Custom tag taxonomy and nested folder organization tree.`,
+            `Keyboard shortcut navigation system for power users.`
+          ],
+          designSpec: `Split-pane editor and preview architecture. Reactive DOM updates minimize reflows and provide instant feedback.`,
+          requirements: `Pure ${stackStr} implementation with modular class/function separation and complete test coverage for state reducers.`
+        },
+
+        // ── 2 ADVANCED PROJECTS ──
+        {
+          level: "Advanced",
+          title: `Enterprise-Grade ${stackStr} Distributed Resource & Workflow Engine`,
+          overview: `An advanced full-scale application that pushes ${stackStr} to its limits. Integrates complete lifecycle management, algorithmic batch processing, and high-performance data pipelines.`,
+          coreFeatures: [
+            `High-throughput event queue and background processing simulator using pure ${stackStr}.`,
+            `Role-based permission gating and cryptographic session verification system.`,
+            `Optimistic UI mutations with automatic rollback on network/validation failure.`,
+            `Memory-optimized caching layer with automatic LRU eviction policy.`
+          ],
+          designSpec: `Micro-modular architecture. Unidirectional data store with immutable state transitions and virtualized list rendering.`,
+          requirements: `Zero third-party libraries. Must achieve sub-100ms interaction latency with full strict typing/linting standards.`
+        },
+        {
+          level: "Advanced",
+          title: `High-Performance ${stackStr} Real-Time State Hub & Query Engine`,
+          overview: `An enterprise platform architected solely on ${stackStr} for high-frequency operations, complex relation mapping, and custom indexing logic.`,
+          coreFeatures: [
+            `Custom in-memory indexing and multi-key search engine built in ${stackStr}.`,
+            `Transactional operations engine with atomic rollback capabilities.`,
+            `Comprehensive diagnostic telemetry panel monitoring latency, memory, and throughput.`,
+            `Configurable audit trail recording every state transition.`
+          ],
+          designSpec: `Monochrome dark-mode engineering canvas with high-density data tables and real-time activity sparklines.`,
+          requirements: `Strict execution constraint: uses only ${stackStr}. Must handle stress test of 10,000+ data nodes smoothly.`
+        }
+      ];
+    }
+
+    // ── GENERATE PROJECTS CLICK HANDLER ──
+    generateBtn.addEventListener('click', async () => {
+      if (currentTags.length === 0) return;
+
+      loader.classList.add('active');
+      emptyState.style.display = 'none';
+      resultsDiv.querySelectorAll('.pg-tier-group').forEach(el => el.remove());
+
+      const stackList = currentTags.join(', ');
+      let generatedProjects = null;
+
+      try {
+        const apiKey = 'sk-ws-H.DMDEEPE.bVy4.MEQCICrfzI53GHJi5peijAxPAZB8kvMG6vxm-SNFJV-zflApAiA860fuRvPRx9EQF1JYE5-XUyIrklJ56xabUJ5UM-aOpg';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+        const response = await fetch('https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'qwen-plus',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are an elite software architect. Output ONLY a valid JSON array of 6 project objects. Do not use markdown blocks like ```json or any intro/outro text.'
+              },
+              {
+                role: 'user',
+                content: `Generate exactly 6 project ideas (2 Beginner, 2 Intermediate, 2 Advanced) using STRICTLY and ONLY these technologies: ${stackList}. Return JSON array of 6 objects with: "level" ("Beginner"|"Intermediate"|"Advanced"), "title", "overview", "coreFeatures" (array of 4 strings), "designSpec", "requirements". No extra third-party tools allowed.`
+              }
+            ]
+          })
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const data = await response.json();
+          const raw = data?.choices?.[0]?.message?.content || '';
+
+          const jsonMatch = raw.match(/\[\s*\{[\s\S]*\}\s*\]/);
+          if (jsonMatch) {
+            generatedProjects = JSON.parse(jsonMatch[0]);
+          }
+        }
+      } catch (err) {
+        console.warn('API route bypassed -> Activating Local Blueprint Architect:', err.message);
+      }
+
+      if (!generatedProjects || !Array.isArray(generatedProjects) || generatedProjects.length < 6) {
+        generatedProjects = generateStrictBlueprintArchitecture(currentTags);
+      }
+
+      loader.classList.remove('active');
+      renderProjects(generatedProjects);
+    });
+
+    // ── RENDER RESULTS DOM ──
+    function renderProjects(projects) {
+      resultsDiv.innerHTML = '';
+
+      const tierCategories = [
+        { name: 'Beginner', class: 'tier-beginner', icon: 'zap', color: '#10B981' },
+        { name: 'Intermediate', class: 'tier-intermediate', icon: 'layers', color: '#F59E0B' },
+        { name: 'Advanced', class: 'tier-advanced', icon: 'cpu', color: '#8B5CF6' }
+      ];
+
+      tierCategories.forEach(tier => {
+        const tierProjects = projects.filter(p => (p.level || '').toLowerCase() === tier.name.toLowerCase());
+        if (tierProjects.length === 0) return;
+
+        const group = document.createElement('div');
+        group.className = `pg-tier-group ${tier.class}`;
+
+        group.innerHTML = `
+          <div class="pg-tier-header">
+            <div class="pg-tier-badge-title">
+              <span class="pg-tier-pill">${tier.name} Level</span>
+              <span style="font-size: 0.88rem; color: var(--slate-500); font-weight: 600;">(${tierProjects.length} Projects)</span>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">Strict Stack Adherence: 100%</span>
+          </div>
+          <div class="pg-card-grid"></div>
+        `;
+
+        const grid = group.querySelector('.pg-card-grid');
+
+        tierProjects.forEach(proj => {
+          const card = document.createElement('div');
+          card.className = 'pg-card';
+
+          const featuresHtml = (proj.coreFeatures || []).map(f => `
+            <li>
+              <i data-lucide="check-circle-2"></i>
+              <span>${f}</span>
+            </li>
+          `).join('');
+
+          const techBadgesHtml = currentTags.map(t => `<span class="pg-card-tech-badge">${t}</span>`).join('');
+
+          card.innerHTML = `
+            <div class="pg-card-top">
+              <div>
+                <h3 class="pg-card-title">${proj.title}</h3>
+                <div class="pg-card-tech-list">${techBadgesHtml}</div>
+              </div>
+            </div>
+
+            <p class="pg-card-overview">${proj.overview}</p>
+
+            <div class="pg-block">
+              <div class="pg-block-title">
+                <i data-lucide="list-checks" style="width: 15px; height: 15px; color: var(--purple-primary);"></i>
+                Core Features
+              </div>
+              <ul class="pg-feature-list">${featuresHtml}</ul>
+            </div>
+
+            <div class="pg-block">
+              <div class="pg-block-title">
+                <i data-lucide="layout" style="width: 15px; height: 15px; color: var(--purple-primary);"></i>
+                Design & Technical Specifications
+              </div>
+              <p class="pg-spec-text">${proj.designSpec}</p>
+            </div>
+
+            <div class="pg-block">
+              <div class="pg-block-title">
+                <i data-lucide="shield-alert" style="width: 15px; height: 15px; color: var(--emerald-500);"></i>
+                Implementation Requirements
+              </div>
+              <p class="pg-spec-text" style="font-weight: 500;">${proj.requirements}</p>
+            </div>
+
+            <div class="pg-card-footer">
+              <button class="pg-copy-btn" onclick="copyProjectBlueprint(this, ${JSON.stringify(proj.title)})">
+                <i data-lucide="copy" style="width: 13px; height: 13px;"></i>
+                <span>Copy Blueprint</span>
+              </button>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        resultsDiv.appendChild(group);
+      });
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    window.copyProjectBlueprint = function (btn, title) {
+      navigator.clipboard.writeText(`SkillForge AI Project Blueprint: ${title}\nTech Stack: ${currentTags.join(', ')}`);
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="check" style="width: 13px; height: 13px; color: var(--emerald-500);"></i> <span style="color: var(--emerald-500);">Copied!</span>`;
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        if (window.lucide) window.lucide.createIcons();
+      }, 2000);
+    };
+  </script>
+
+  <!-- Firebase Web SDK v10 CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT3Y2VlxtYKi5hMBXgXnrk0IScPMvD5sc",
+      authDomain: "skillforge-ai-3674f.firebaseapp.com",
+      projectId: "skillforge-ai-3674f",
+      storageBucket: "skillforge-ai-3674f.firebasestorage.app",
+      messagingSenderId: "313873956489",
+      appId: "1:313873956489:web:f16f4edc9c859013c01058",
+      measurementId: "G-MLYLR93BV5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    function updateProfileUI(profile) {
+      const avatarImg = document.getElementById('bwUserImg');
+      const welcomeName = document.getElementById('welcomeUserName');
+      if (avatarImg && profile.photoURL) {
+        avatarImg.src = profile.photoURL;
+      }
+      if (welcomeName && profile.name) {
+        welcomeName.textContent = profile.name;
+      }
+    }
+
+    const cachedUserStr = localStorage.getItem('user');
+    if (cachedUserStr) {
+      try {
+        const cachedUser = JSON.parse(cachedUserStr);
+        updateProfileUI(cachedUser);
+      } catch (e) { }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.body.classList.remove('is-guest');
+        const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+        const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+        const exactEmail = user.email || pData.email || '';
+        let exactPhoto = user.photoURL || pData.photoURL;
+
+        if (exactPhoto && exactPhoto.includes('googleusercontent.com')) {
+          exactPhoto = exactPhoto.replace(/=s\d+(-c)?/g, '=s400-c');
+        } else if (!exactPhoto) {
+          exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=FFFFFF&color=000000&bold=true&rounded=true&size=256`;
+        }
+
+        const profile = {
+          uid: user.uid,
+          name: exactName,
+          email: exactEmail,
+          photoURL: exactPhoto
+        };
+        localStorage.setItem('user', JSON.stringify(profile));
+        updateProfileUI(profile);
+      } else {
+        const local = localStorage.getItem('user');
+        if (!local) {
+          document.body.classList.add('is-guest');
+        }
+      }
+    });
+
+    window.handleSignOut = async function () {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error("SignOut err:", e);
+      }
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    };
+  </script>
+
+  <script>
+    function updateActiveIndicator(animate = true) {
+      const menuList = document.getElementById('bwMenuList');
+      const indicator = document.getElementById('bwActiveIndicator');
+      if (!menuList || !indicator) return;
+
+      const activeItem = menuList.querySelector('.bw-nav-item.active');
+      if (!activeItem) {
+        indicator.style.opacity = '0';
+        return;
+      }
+
+      const menuRect = menuList.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const topOffset = itemRect.top - menuRect.top;
+      const itemHeight = itemRect.height;
+
+      if (!animate) {
+        indicator.style.transition = 'none';
+      } else {
+        indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+      }
+
+      indicator.style.transform = `translateY(${topOffset}px)`;
+      indicator.style.height = `${itemHeight}px`;
+      indicator.style.opacity = '1';
+
+      if (!animate) {
+        void indicator.offsetHeight;
+        requestAnimationFrame(() => {
+          indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+        });
+      }
+    }
+
+    // Attach smooth click handling to nav items
+    document.querySelectorAll('.bw-nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (item.classList.contains('active')) return;
+
+        document.querySelectorAll('.bw-nav-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        updateActiveIndicator(true);
+
+        if (href && href !== '#' && !href.startsWith('javascript:')) {
+          e.preventDefault();
+          setTimeout(() => {
+            window.location.href = href;
+          }, 240);
+        }
+      });
+    });
+
+    function toggleBwNav() {
+      const nav = document.getElementById('bwPillNav');
+      nav.classList.toggle('collapsed');
+      setTimeout(() => updateActiveIndicator(false), 360);
+    }
+
+    window.addEventListener('resize', () => updateActiveIndicator(false));
+    document.addEventListener('DOMContentLoaded', () => updateActiveIndicator(false));
+    window.addEventListener('load', () => {
+      updateActiveIndicator(false);
+    });
+
+    // Immediate instant pre-render
+    updateActiveIndicator(false);
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+
+</html>

@@ -234,7 +234,12 @@ function initLandingPage() {
       `;
 
       try {
-        const response = await fetch('/api/roadmaps/generate', {
+        const roadmapApiUrl = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.ROADMAP_API) 
+          ? `${window.SKILLFORGE_CONFIG.ROADMAP_API}/generate` 
+          : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+              ? 'http://localhost:5000/api/roadmaps/generate' 
+              : 'https://skillforge-ai-backend-bbho.onrender.com/api/roadmaps/generate');
+        const response = await fetch(roadmapApiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ currentSkills, targetRole })

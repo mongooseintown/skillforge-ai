@@ -1,0 +1,3525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Theoretical Roadmap — SkillForge AI</title>
+    <meta name="description" content="SkillForge AI Theoretical Roadmap workspace.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-dark: #07050E;
+            --sidebar-bg: #14141A;
+            --purple-primary: #7C3AED;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        html,
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Strict Zero-Scroll */
+            background: var(--bg-dark);
+            color: #FFFFFF;
+        }
+
+        /* ── AMBIENT BACKGROUND GLOW ── */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── APP DASHBOARD UNIFIED SHELL (ZERO SCROLL) ── */
+        .app-dashboard-shell {
+            display: flex;
+            height: calc(100vh - 48px);
+            max-height: calc(100vh - 48px);
+            margin: 24px;
+            padding: 0;
+            gap: 0;
+            position: relative;
+            z-index: 10;
+            align-items: stretch;
+            border-radius: 36px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.75);
+            background: #FFFFFF;
+            overflow: visible;
+        }
+
+        /* ==========================================================================
+       EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL (DOCKED TO WHITE CANVAS)
+       ========================================================================== */
+        .bw-pill-nav {
+            width: 240px;
+            background: #131318;
+            border-radius: 36px 0 0 36px;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 28px 16px 28px 20px;
+            position: relative;
+            z-index: 20;
+            flex-shrink: 0;
+            transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.3s ease;
+        }
+
+        .bw-pill-nav.collapsed {
+            width: 78px;
+            padding: 28px 14px;
+            align-items: center;
+        }
+
+        /* Top Header Row */
+        .bw-pill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            width: 100%;
+        }
+
+        .bw-logo-bubble {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .bw-logo-bubble:hover {
+            transform: scale(1.06);
+        }
+
+        .bw-toggle-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .bw-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+            color: #FFFFFF;
+            transform: scale(1.08);
+        }
+
+        .bw-pill-nav.collapsed .bw-toggle-btn {
+            display: none;
+        }
+
+        /* Menu Items */
+        .bw-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            flex: 1;
+            position: relative;
+        }
+
+        /* ── DYNAMIC SLIDING ACTIVE INDICATOR ── */
+        .bw-active-indicator {
+            position: absolute;
+            left: 0;
+            right: -16px;
+            height: 52px;
+            background: #FFFFFF;
+            border-radius: 24px 0 0 24px;
+            z-index: 10;
+            pointer-events: none;
+            transition: transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease;
+            opacity: 0;
+            will-change: transform, height;
+        }
+
+        /* Pure Mathematical Inverted Curves (Smooth Concave Blend) */
+        .bw-active-indicator::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -20px;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 0 0, transparent 20px, #FFFFFF 20.5px);
+            pointer-events: none;
+        }
+
+        .bw-active-indicator::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: -20px;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 0 100%, transparent 20px, #FFFFFF 20.5px);
+            pointer-events: none;
+        }
+
+        .bw-pill-nav.collapsed .bw-active-indicator {
+            right: 0;
+            width: 46px;
+            height: 46px;
+            left: 50%;
+            margin-left: -23px;
+            border-radius: 50%;
+        }
+
+        .bw-pill-nav.collapsed .bw-active-indicator::before,
+        .bw-pill-nav.collapsed .bw-active-indicator::after {
+            display: none;
+        }
+
+        .bw-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 0.96rem;
+            font-weight: 600;
+            transition: color 0.25s ease, transform 0.2s ease;
+            position: relative;
+            border-radius: 20px;
+            white-space: nowrap;
+            z-index: 20;
+            background: transparent !important;
+            cursor: pointer;
+        }
+
+        .bw-nav-item:hover {
+            color: #FFFFFF;
+        }
+
+        .bw-nav-item.active {
+            color: #000000 !important;
+            font-weight: 700;
+        }
+
+        .bw-nav-item.active .bw-nav-icon-wrap i,
+        .bw-nav-item.active .bw-nav-icon-wrap svg {
+            color: #000000 !important;
+            stroke: #000000 !important;
+        }
+
+        .bw-nav-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            transition: color 0.25s ease;
+        }
+
+        .bw-nav-label {
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .bw-pill-nav.collapsed .bw-nav-label {
+            display: none;
+        }
+
+        .bw-pill-nav.collapsed .bw-nav-item {
+            width: 46px;
+            height: 46px;
+            justify-content: center;
+            padding: 0;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+
+        /* Bottom User Profile Section */
+        .bw-pill-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .bw-user-bubble {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .bw-user-bubble img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bw-logout-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .bw-logout-btn:hover {
+            color: #EF4444;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .bw-pill-nav.collapsed .bw-logout-btn {
+            display: none;
+        }
+
+        /* ==========================================================================
+       RIGHT FULL-BLEED WHITE CANVAS PAGE
+       ========================================================================== */
+        .bw-white-page-canvas {
+            flex: 1;
+            background: #FFFFFF;
+            border-radius: 0 36px 36px 0;
+            height: 100%;
+            max-height: 100%;
+            padding: 36px 44px 0 44px;
+            color: #0F172A;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* White Canvas Header */
+        .white-canvas-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 22px;
+            border-bottom: 1px solid #E2E8F0;
+            margin-bottom: 22px;
+            flex-shrink: 0;
+        }
+
+        .canvas-page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .canvas-page-subtitle {
+            font-size: 0.95rem;
+            color: #64748B;
+            margin: 4px 0 0 0;
+            font-weight: 500;
+        }
+
+        /* ── ROADMAP CONTROL BAR ── */
+        .roadmap-control-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .roadmap-select-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 360px;
+            min-width: 220px;
+        }
+
+        .roadmap-select-wrap>i.lead-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--purple-primary);
+            pointer-events: none;
+        }
+
+        .roadmap-select-wrap .chevron {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            pointer-events: none;
+        }
+
+        .roadmap-select {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background: #FFFFFF;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 13px 44px 13px 46px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0F172A;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .roadmap-select:hover {
+            border-color: #CBD5E1;
+        }
+
+        .roadmap-select:focus {
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        }
+
+        .roadmap-go-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 13px 26px;
+            border-radius: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .roadmap-go-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+        }
+
+        .roadmap-go-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ==========================================================================
+       ROADMAP SCROLL CANVAS  (Vertical, scrollable, NO pan/zoom)
+       ========================================================================== */
+        .roadmap-scroll-area {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: auto;
+            padding: 10px 4px 40px 4px;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E1 transparent;
+        }
+
+        .roadmap-scroll-area::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .roadmap-scroll-area::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+
+        .roadmap-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Empty placeholder */
+        .roadmap-empty {
+            height: 100%;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 14px;
+            color: #94A3B8;
+            padding: 20px;
+        }
+
+        .roadmap-empty-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: #F8FAFC;
+            border: 1.5px dashed #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--purple-primary);
+        }
+
+        /* ==========================================================================
+           ROADMAP.SH-STYLE ROADMAP (central spine, zigzag yellow topic boxes)
+           Layout model: a 3-column CSS grid  [ left | spine | right ].
+           The spine column is a fixed narrow center; subtopics live in the left OR
+           right column IN NORMAL FLOW, so each row grows to fit its content and
+           rows never overlap. Connectors are drawn from each subtopic toward the
+           spine, and the topic box straddles the spine on its own centered layer.
+           ========================================================================== */
+        .rm-board {
+            position: relative;
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 6px 0 50px 0;
+        }
+
+        /* Central vertical spine line (drawn down the middle of the board) */
+        .rm-spine {
+            position: absolute;
+            top: 8px;
+            bottom: 40px;
+            left: 50%;
+            width: 3px;
+            background: #CBD5E1;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        /* Start / Goal pill nodes, centered on the spine */
+        .rm-end-node {
+            position: relative;
+            z-index: 5;
+            width: max-content;
+            margin: 0 auto;
+            padding: 13px 30px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border: 2px solid #0F172A;
+        }
+
+        .rm-end-node.rm-start {
+            color: #FFFFFF;
+            background: #0F172A;
+            box-shadow: 4px 4px 0 #7C3AED;
+            margin-bottom: 18px;
+        }
+
+        .rm-end-node.rm-goal {
+            color: #052e16;
+            background: #34D399;
+            box-shadow: 4px 4px 0 #0F172A;
+            margin-top: 18px;
+        }
+
+        /* Each topic row is a 3-column grid: [subtopics-left | spine | subtopics-right]
+           The centre column is wide enough for the longest topic label so the yellow
+           box never has to shrink or clip its text. */
+        .rm-row {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 300px 1fr;
+            align-items: center;
+            column-gap: 0;
+            margin: 34px 0;
+        }
+
+        /* Center spine column holds the yellow topic box straddling the line.
+           `overflow: visible` + a zero-width flex child lets the topic box grow
+           WIDER than the 150px spine column without ever clipping its text. */
+        .rm-center {
+            grid-column: 2;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            overflow: visible;
+        }
+
+        /* Yellow topic box (roadmap.sh signature look).
+           `width: max-content` + `max-width: none` guarantees the box always
+           sizes itself to fit its full label — text can never overflow it. */
+        .rm-box {
+            position: relative;
+            z-index: 4;
+            background: #FACC15;
+            color: #1E293B;
+            font-weight: 700;
+            font-size: 0.98rem;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #0F172A;
+            box-shadow: 3px 3px 0 #0F172A;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            white-space: nowrap;
+            width: max-content;
+            max-width: none;
+            flex: 0 0 auto;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        /* The label span must never shrink or clip */
+        .rm-box>span {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        .rm-box {
+            cursor: pointer;
+        }
+
+        .rm-box:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0 #0F172A;
+        }
+
+        .rm-box.rm-box-active {
+            background: #FDE047;
+            box-shadow: 5px 5px 0 #7C3AED;
+        }
+
+        /* ── GAMIFIED NODE STATES: locked / current / completed ── */
+        .rm-box.rm-locked {
+            background: #E2E8F0;
+            color: #94A3B8;
+            border-color: #94A3B8;
+            box-shadow: 3px 3px 0 #CBD5E1;
+            cursor: not-allowed;
+            filter: grayscale(0.4);
+        }
+
+        .rm-box.rm-locked:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0 #CBD5E1;
+        }
+
+        .rm-box.rm-locked .rm-box-num {
+            background: #94A3B8;
+            color: #F8FAFC;
+        }
+
+        .rm-box.rm-completed {
+            background: #34D399;
+            color: #052E16;
+            border-color: #065F46;
+            box-shadow: 3px 3px 0 #065F46;
+        }
+
+        .rm-box.rm-completed .rm-box-num {
+            background: #065F46;
+            color: #A7F3D0;
+        }
+
+        .rm-box.rm-current {
+            box-shadow: 3px 3px 0 #0F172A, 0 0 0 0 rgba(124, 58, 237, 0.7);
+            animation: rmPulse 2s infinite;
+        }
+
+        @keyframes rmPulse {
+            0% {
+                box-shadow: 3px 3px 0 #0F172A, 0 0 0 0 rgba(124, 58, 237, 0.6);
+            }
+
+            70% {
+                box-shadow: 3px 3px 0 #0F172A, 0 0 0 14px rgba(124, 58, 237, 0);
+            }
+
+            100% {
+                box-shadow: 3px 3px 0 #0F172A, 0 0 0 0 rgba(124, 58, 237, 0);
+            }
+        }
+
+        /* Small state badge attached to the topic box */
+        .rm-state-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-left: 2px;
+        }
+
+        .rm-box.rm-locked .rm-state-badge {
+            color: #64748B;
+        }
+
+        .rm-box.rm-completed .rm-state-badge {
+            color: #065F46;
+        }
+
+        /* Dim the subtopics of a locked node too */
+        .rm-row.rm-row-locked .rm-sub {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+            color: #94A3B8;
+            box-shadow: 2px 2px 0 rgba(203, 213, 225, 0.6);
+        }
+
+        /* ── QUEST PROGRESS HUD (above the roadmap) ── */
+        .rm-quest-hud {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 860px;
+            margin: 0 auto 18px auto;
+            padding: 14px 20px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #0F172A 0%, #26205A 100%);
+            color: #FFFFFF;
+        }
+
+        .rm-quest-hud h4 {
+            margin: 0;
+            font-size: 0.92rem;
+            font-weight: 800;
+        }
+
+        .rm-quest-hud p {
+            margin: 2px 0 0 0;
+            font-size: 0.76rem;
+            color: #A5B4FC;
+            font-weight: 600;
+        }
+
+        .rm-quest-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+            overflow: hidden;
+            min-width: 80px;
+        }
+
+        .rm-quest-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #7C3AED, #34D399);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .rm-quest-count {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #34D399;
+            white-space: nowrap;
+        }
+
+        /* Locked-node notice inside the drawer */
+        .drawer-locked-note {
+            text-align: center;
+            padding: 26px 18px;
+        }
+
+        .drawer-locked-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            background: #F1F5F9;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px auto;
+        }
+
+        .rm-box-num {
+            width: 23px;
+            height: 23px;
+            border-radius: 50%;
+            background: #0F172A;
+            color: #FACC15;
+            font-size: 0.78rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Purple node dot centered on the spine, behind the topic box */
+        .rm-center::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #7C3AED;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #7C3AED;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        /* Side columns hold the subtopic branch boxes IN NORMAL FLOW */
+        .rm-side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rm-side.rm-left {
+            grid-column: 1;
+            align-items: flex-end;
+        }
+
+        .rm-side.rm-right {
+            grid-column: 3;
+            align-items: flex-start;
+        }
+
+        /* Subtopic branch box (small yellow node hanging off the topic) */
+        .rm-sub {
+            position: relative;
+            background: #FEF9C3;
+            color: #1E293B;
+            font-weight: 600;
+            font-size: 0.82rem;
+            line-height: 1.3;
+            padding: 9px 14px;
+            border-radius: 7px;
+            border: 1.5px solid #CA8A04;
+            box-shadow: 2px 2px 0 rgba(202, 138, 4, 0.55);
+            transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+            max-width: 230px;
+        }
+
+        .rm-side.rm-left .rm-sub {
+            text-align: right;
+            margin-right: 30px;
+        }
+
+        .rm-side.rm-right .rm-sub {
+            text-align: left;
+            margin-left: 30px;
+        }
+
+        .rm-sub:hover {
+            transform: translateY(-1px);
+            background: #FEF08A;
+            box-shadow: 3px 3px 0 #CA8A04;
+        }
+
+        /* SVG connector layer: real curved lines drawn from each subtopic to the
+           mother topic box. Measured in JS so lines ALWAYS touch both boxes. */
+        .rm-links {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .rm-link-path {
+            fill: none;
+            stroke: #CA8A04;
+            stroke-width: 2;
+            stroke-dasharray: 5 5;
+            stroke-linecap: round;
+        }
+
+        @media (max-width: 720px) {
+            .rm-board {
+                max-width: 100%;
+            }
+
+            .rm-row {
+                grid-template-columns: 1fr 220px 1fr;
+            }
+
+            .rm-sub {
+                font-size: 0.72rem;
+                max-width: 150px;
+                padding: 7px 10px;
+            }
+
+            .rm-side.rm-left .rm-sub {
+                margin-right: 18px;
+            }
+
+            .rm-side.rm-right .rm-sub {
+                margin-left: 18px;
+            }
+        }
+
+        /* ==========================================================================
+           RIGHT-SIDE SLIDE-IN DRAWER (topic panel + locked AI quiz)
+           Opens from the right edge of the white canvas when a topic box is clicked.
+           While a quiz is in progress the drawer is LOCKED and cannot be closed.
+           ========================================================================== */
+        .quiz-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 5, 14, 0.45);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+            z-index: 4000;
+        }
+
+        .quiz-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* The drawer itself — docked to the right edge, full height */
+        .quiz-modal {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            bottom: 24px;
+            width: 460px;
+            max-width: calc(100vw - 48px);
+            background: #FFFFFF;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: -20px 0 70px rgba(0, 0, 0, 0.45);
+            transform: translateX(calc(100% + 40px));
+            transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+            animation: none;
+        }
+
+        .quiz-overlay.show .quiz-modal {
+            transform: translateX(0);
+        }
+
+        .quiz-shake {
+            animation: quizShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+
+        @keyframes quizShake {
+
+            10%,
+            90% {
+                transform: translateX(-2px);
+            }
+
+            20%,
+            80% {
+                transform: translateX(5px);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translateX(-8px);
+            }
+
+            40%,
+            60% {
+                transform: translateX(8px);
+            }
+        }
+
+        /* Drawer close (hamburger/X) button — hidden while locked */
+        .quiz-close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.14);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .quiz-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .quiz-close-btn.hidden {
+            display: none;
+        }
+
+        /* ── DRAWER MENU (the "hamburger menu" list shown on topic click) ── */
+        .drawer-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 16px;
+            background: #FFFFFF;
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .drawer-menu-item:hover {
+            border-color: #C4B5FD;
+            background: #FAF8FF;
+            transform: translateX(-3px);
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.13);
+        }
+
+        .drawer-menu-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            color: #FFFFFF;
+        }
+
+        .drawer-menu-icon.alt {
+            background: #F1F5F9;
+            color: #64748B;
+        }
+
+        .drawer-menu-text h4 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .drawer-menu-text p {
+            margin: 2px 0 0 0;
+            font-size: 0.78rem;
+            color: #64748B;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .drawer-section-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94A3B8;
+            margin: 0 0 12px 2px;
+        }
+
+        .drawer-sub-chip {
+            display: inline-block;
+            background: #FEF9C3;
+            border: 1px solid #FDE047;
+            color: #713F12;
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 6px 11px;
+            border-radius: 999px;
+            margin: 0 6px 8px 0;
+        }
+
+        /* ==================================================================
+           ELI5 — "TEACH ME LIKE I'M 5"
+           Subtopic chips become clickable; the picked one moves into the
+           selection tray, which unlocks the lesson button.
+           ================================================================== */
+        .drawer-sub-chip.pickable {
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .drawer-sub-chip.pickable:hover {
+            transform: translateY(-2px);
+            border-color: #CA8A04;
+            box-shadow: 0 4px 12px rgba(202, 138, 4, 0.35);
+        }
+
+        .drawer-sub-chip.is-picked {
+            display: none;
+        }
+
+        /* The selection tray */
+        .eli5-tray {
+            min-height: 62px;
+            border: 2px dashed #FCA5A5;
+            background: #FEF2F2;
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .eli5-tray.filled {
+            border-style: solid;
+            border-color: #EF4444;
+        }
+
+        .eli5-tray-hint {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #B91C1C;
+            text-align: center;
+            margin: 0;
+        }
+
+        .eli5-picked-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: #FFFFFF;
+            border: 1.5px solid #EF4444;
+            color: #7F1D1D;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 8px 10px 8px 14px;
+            border-radius: 999px;
+            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.18);
+        }
+
+        .eli5-remove-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: #FEE2E2;
+            color: #B91C1C;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.18s ease, transform 0.18s ease;
+        }
+
+        .eli5-remove-btn:hover {
+            background: #EF4444;
+            color: #FFFFFF;
+            transform: rotate(90deg);
+        }
+
+        /* The unlockable action button */
+        .eli5-teach-btn {
+            width: 100%;
+            margin-top: 14px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(124, 58, 237, 0.34);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+
+        .eli5-teach-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(124, 58, 237, 0.45);
+        }
+
+        .eli5-teach-btn:disabled {
+            background: #E2E8F0;
+            color: #94A3B8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Generated lesson panel */
+        .eli5-result {
+            margin-top: 18px;
+        }
+
+        .eli5-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #7C3AED;
+            padding: 18px 4px;
+        }
+
+        .eli5-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid #DDD6FE;
+            border-top-color: #7C3AED;
+            border-radius: 50%;
+            animation: eli5spin 0.75s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes eli5spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .eli5-error {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.5;
+            padding: 12px 14px;
+            border-radius: 12px;
+        }
+
+        .eli5-lesson-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .eli5-lesson-head {
+            padding: 16px 18px;
+            background: linear-gradient(135deg, #F5F3FF 0%, #EEF2FF 100%);
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .eli5-lesson-head h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .eli5-lesson-head p {
+            margin: 6px 0 0;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #5B21B6;
+            line-height: 1.5;
+        }
+
+        .eli5-lesson-body {
+            padding: 16px 18px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .eli5-lesson-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .eli5-lesson-body::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 3px;
+        }
+
+        .eli5-sec {
+            margin-bottom: 18px;
+        }
+
+        .eli5-sec:last-child {
+            margin-bottom: 0;
+        }
+
+        .eli5-sec h5 {
+            margin: 0 0 7px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .eli5-sec p {
+            margin: 0 0 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+            line-height: 1.62;
+        }
+
+        .eli5-code {
+            background: #0F172A;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin: 10px 0 8px;
+            overflow-x: auto;
+        }
+
+        .eli5-code pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.6;
+            color: #E2E8F0;
+            white-space: pre;
+        }
+
+        .eli5-code-lang {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #A78BFA;
+            margin-bottom: 7px;
+        }
+
+        .eli5-code-note {
+            font-size: 0.76rem;
+            font-style: italic;
+            color: #64748B;
+            margin: 0;
+            line-height: 1.55;
+        }
+
+        .eli5-takeaways {
+            background: #F5F3FF;
+            border: 1px solid #DDD6FE;
+            border-radius: 12px;
+            padding: 13px 16px;
+            margin-top: 6px;
+        }
+
+        .eli5-takeaways ul,
+        .eli5-practice ol {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .eli5-takeaways li {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #4C1D95;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .eli5-practice {
+            margin-top: 16px;
+        }
+
+        .eli5-practice li {
+            font-size: 0.79rem;
+            font-weight: 700;
+            color: #0F172A;
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+
+        .eli5-practice li span {
+            display: block;
+            font-weight: 500;
+            color: #64748B;
+            font-size: 0.76rem;
+            margin-top: 4px;
+        }
+
+        .eli5-download-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 13px 18px;
+            border-radius: 14px;
+            border: 1.5px solid #7C3AED;
+            background: #FFFFFF;
+            color: #7C3AED;
+            font-size: 0.86rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            cursor: pointer;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .eli5-download-btn:hover {
+            background: #7C3AED;
+            color: #FFFFFF;
+            transform: translateY(-2px);
+        }
+
+        .quiz-head {
+            padding: 22px 26px;
+            background: linear-gradient(135deg, #0F172A 0%, #26205A 100%);
+            color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        .quiz-head-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .quiz-head-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quiz-head h3 {
+            margin: 0;
+            font-size: 1.16rem;
+            font-weight: 800;
+        }
+
+        .quiz-head p {
+            margin: 3px 0 0 0;
+            font-size: 0.8rem;
+            color: #A5B4FC;
+            font-weight: 600;
+        }
+
+        .quiz-lock-pill {
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.16);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            color: #FCA5A5;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 6px 11px;
+            border-radius: 999px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .quiz-timer-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(124, 58, 237, 0.22);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            color: #EDE9FE;
+            font-size: 0.82rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 5px 12px;
+            border-radius: 999px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: auto;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-timer-pill.timer-warning {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.7);
+            color: #FCA5A5;
+            animation: pulseTimer 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseTimer {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.06);
+            }
+        }
+
+        /* ── COOLDOWN & PENALTY UI STYLES ── */
+        .drawer-cooldown-card {
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .drawer-cooldown-card.penalty {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FFF1F2 100%);
+            border: 1.5px solid #FECACA;
+        }
+
+        .drawer-cooldown-card.delay {
+            background: linear-gradient(135deg, #F5F3FF 0%, #EEF2FF 100%);
+            border: 1.5px solid #DDD6FE;
+        }
+
+        .drawer-cooldown-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px auto;
+        }
+
+        .drawer-cooldown-card.penalty .drawer-cooldown-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: #DC2626;
+        }
+
+        .drawer-cooldown-card.delay .drawer-cooldown-icon {
+            background: rgba(124, 58, 237, 0.15);
+            color: #7C3AED;
+        }
+
+        .drawer-cooldown-title {
+            font-size: 1.02rem;
+            font-weight: 800;
+            margin: 0 0 5px 0;
+        }
+
+        .drawer-cooldown-card.penalty .drawer-cooldown-title {
+            color: #991B1B;
+        }
+
+        .drawer-cooldown-card.delay .drawer-cooldown-title {
+            color: #5B21B6;
+        }
+
+        .drawer-cooldown-desc {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            color: #475569;
+            margin: 0 auto 14px auto;
+            max-width: 320px;
+        }
+
+        .cooldown-timer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0F172A;
+            color: #F8FAFC;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 12px;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+        }
+
+        .rm-cooldown-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-left: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .rm-cooldown-badge.penalty {
+            background: rgba(239, 68, 68, 0.15);
+            color: #B91C1C;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .rm-cooldown-badge.delay {
+            background: rgba(124, 58, 237, 0.15);
+            color: #6D28D9;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+        }
+
+        .quiz-progress-track {
+            margin-top: 16px;
+            height: 7px;
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #7C3AED, #34D399);
+            border-radius: 999px;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quiz-body {
+            padding: 24px 26px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 190px;
+        }
+
+        .quiz-foot {
+            padding: 16px 26px 20px 26px;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-shrink: 0;
+            background: #F8FAFC;
+        }
+
+        .quiz-step-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #64748B;
+        }
+
+        .quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quiz-btn-primary {
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.32);
+        }
+
+        .quiz-btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.48);
+        }
+
+        .quiz-btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .quiz-btn-ghost {
+            background: #FFFFFF;
+            color: #475569;
+            border: 1.5px solid #E2E8F0;
+        }
+
+        .quiz-btn-ghost:hover:not(:disabled) {
+            border-color: #CBD5E1;
+            background: #F1F5F9;
+        }
+
+        .quiz-btn-ghost:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Question + options */
+        .quiz-question {
+            font-size: 1.04rem;
+            font-weight: 700;
+            color: #0F172A;
+            line-height: 1.5;
+            margin: 0 0 18px 0;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 13px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.16s ease;
+            background: #FFFFFF;
+        }
+
+        .quiz-option:hover {
+            border-color: #C4B5FD;
+            background: #FAF8FF;
+        }
+
+        .quiz-option.selected {
+            border-color: #7C3AED;
+            background: #F5F3FF;
+            color: #4C1D95;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+        }
+
+        .quiz-option-key {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: #F1F5F9;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.76rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            transition: all 0.16s;
+        }
+
+        .quiz-option.selected .quiz-option-key {
+            background: #7C3AED;
+            color: #FFFFFF;
+        }
+
+        /* Loading state */
+        .quiz-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .quiz-spinner {
+            width: 46px;
+            height: 46px;
+            border: 4px solid #EDE9FE;
+            border-top-color: #7C3AED;
+            border-radius: 50%;
+            animation: quizSpin 0.85s linear infinite;
+        }
+
+        @keyframes quizSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Results */
+        .quiz-score-ring {
+            width: 116px;
+            height: 116px;
+            border-radius: 50%;
+            margin: 0 auto 18px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #FFFFFF;
+        }
+
+        .quiz-result-row {
+            border: 1.5px solid #E2E8F0;
+            border-radius: 13px;
+            padding: 14px 16px;
+            margin-bottom: 11px;
+        }
+
+        .quiz-result-row.ok {
+            border-color: #A7F3D0;
+            background: #ECFDF5;
+        }
+
+        .quiz-result-row.bad {
+            border-color: #FECACA;
+            background: #FEF2F2;
+        }
+
+        .quiz-result-q {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 8px 0;
+            line-height: 1.45;
+        }
+
+        .quiz-result-meta {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin: 3px 0;
+        }
+
+        .quiz-result-explain {
+            font-size: 0.79rem;
+            color: #64748B;
+            font-style: italic;
+            margin: 8px 0 0 0;
+            line-height: 1.5;
+        }
+
+        .quiz-error {
+            text-align: center;
+            padding: 30px 16px;
+            color: #64748B;
+        }
+
+        @media (max-width: 640px) {
+
+            .milestone {
+                max-width: 72%;
+            }
+
+            .milestone-card {
+                min-width: 0;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .app-dashboard-shell {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+
+            .bw-pill-nav {
+                width: 100%;
+                border-radius: 24px 24px 0 0;
+            }
+
+            .bw-white-page-canvas {
+                border-radius: 0 0 24px 24px;
+                padding: 24px 20px 0 20px;
+            }
+
+            .roadmap-control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .roadmap-select-wrap {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-bg"></div>
+
+    <!-- UNIFIED DASHBOARD APPLICATION SHELL -->
+    <div class="app-dashboard-shell">
+
+        <!-- EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL -->
+        <aside class="bw-pill-nav" id="bwPillNav">
+
+            <!-- Top Header Row -->
+            <div class="bw-pill-header">
+                <a href="index.html" class="bw-logo-bubble" title="SkillForge AI">
+                    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+                        <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#FFFFFF" />
+                        <path d="M8 20L18 28L28 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                </a>
+                <button class="bw-toggle-btn" id="bwNavToggleBtn" onclick="toggleBwNav()" title="Toggle Menu">
+                    <i data-lucide="chevron-left" id="bwToggleIcon" style="width: 14px; height: 14px;"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Menu Items -->
+            <nav class="bw-menu-list" id="bwMenuList">
+                <!-- Dynamic Sliding Active Indicator -->
+                <div class="bw-active-indicator" id="bwActiveIndicator"></div>
+
+                <a href="index.html" class="bw-nav-item" data-nav="home" title="Landing Page">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="home" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Home</span>
+                </a>
+
+                <a href="dashboard.html" class="bw-nav-item" data-nav="dashboard" title="Learner Dashboard">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="layout-dashboard" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Dashboard</span>
+                </a>
+
+                <a href="profile.html" class="bw-nav-item" data-nav="profile" title="User Profile">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="user" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Profile</span>
+                </a>
+
+                <a href="verify.html" class="bw-nav-item" data-nav="verify" title="Certificate Verification">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="shield-check" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Verify</span>
+                </a>
+
+                <a href="projects.html" class="bw-nav-item" data-nav="projects" title="My Projects">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="folder-code" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Projects</span>
+                </a>
+
+                <a href="theoretical-roadmap.html" class="bw-nav-item active" data-nav="theoretical-roadmap"
+                    title="Theoretical Roadmap">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="map" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Theoretical Roadmap</span>
+                </a>
+
+                <!-- Item 7: Jobs -->
+                <a href="jobs.html" class="bw-nav-item" data-nav="jobs" title="Career & Job Board">
+                    <div class="bw-nav-icon-wrap">
+                        <i data-lucide="briefcase" style="width: 19px; height: 19px;"></i>
+                    </div>
+                    <span class="bw-nav-label">Jobs</span>
+                </a>
+            </nav>
+
+            <!-- Bottom User / Logout Section -->
+            <div class="bw-pill-bottom">
+                <div class="bw-user-bubble" id="bwUserAvatarWrap" onclick="window.location.href='profile.html'"
+                    title="User Profile">
+                    <img id="bwUserImg"
+                        src="https://ui-avatars.com/api/?name=User&background=FFFFFF&color=000000&bold=true&rounded=true"
+                        alt="Avatar">
+                </div>
+                <button class="bw-logout-btn" onclick="handleSignOut()" title="Sign Out">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- RIGHT FULL-BLEED WHITE CANVAS PAGE -->
+        <main class="bw-white-page-canvas" id="dashboardWorkspace">
+
+            <!-- Top White Canvas Header -->
+            <div class="white-canvas-header">
+                <div class="header-left">
+                    <h1 class="canvas-page-title">Theoretical Roadmap</h1>
+                    <p class="canvas-page-subtitle">Your personalized learning roadmap based on your selected career
+                        path.</p>
+                </div>
+            </div>
+
+            <!-- Scrollable Roadmap Canvas -->
+            <div class="roadmap-scroll-area" id="roadmapScrollArea">
+                <div class="roadmap-empty" id="roadmapEmpty">
+                    <div class="roadmap-empty-icon">
+                        <i data-lucide="git-fork" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3 style="font-size: 1.1rem; color: #334155; font-weight: 700; margin: 0;">No Career Path Selected
+                        Yet</h3>
+                    <p style="font-size: 0.88rem; max-width: 440px; line-height: 1.5; margin: 0;">You haven't chosen a
+                        career path yet. Go to your <strong>Profile → Career Path</strong> and lock in a career to
+                        generate your personalized roadmap.</p>
+                    <a href="profile.html"
+                        style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #FFFFFF; padding: 11px 22px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+                        <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                        Go to Profile
+                    </a>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ==========================================================================
+         RIGHT-SIDE SLIDE-IN DRAWER
+         Opens when a mother topic box is clicked. Shows a menu (with the AI Quiz
+         option). Once a quiz starts the drawer becomes LOCKED — no close button,
+         no ESC, no outside-click — until the quiz is submitted.
+         ========================================================================== -->
+    <div class="quiz-overlay" id="quizOverlay">
+        <div class="quiz-modal" id="quizModal" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+
+            <div class="quiz-head">
+                <div class="quiz-head-top">
+                    <div class="quiz-head-icon">
+                        <i data-lucide="layers" style="width: 22px; height: 22px;"></i>
+                    </div>
+                    <div style="min-width:0;">
+                        <h3 id="quizTitle">Topic</h3>
+                        <p id="quizSubtitle">Choose an action</p>
+                    </div>
+                    <span class="quiz-timer-pill" id="quizTimerPill" style="display:none;">
+                        <i data-lucide="timer" style="width: 13px; height: 13px;"></i>
+                        <span id="quizTimerDisplay">05:00</span>
+                    </span>
+                    <span class="quiz-lock-pill" id="quizLockPill" style="display:none;">
+                        <i data-lucide="lock" style="width: 12px; height: 12px;"></i>
+                        LOCKED
+                    </span>
+                    <button class="quiz-close-btn" id="quizCloseBtn" onclick="closeQuiz()" title="Close">
+                        <i data-lucide="x" style="width: 17px; height: 17px;"></i>
+                    </button>
+                </div>
+                <div class="quiz-progress-track" id="quizProgressTrack" style="display:none;">
+                    <div class="quiz-progress-fill" id="quizProgressFill"></div>
+                </div>
+            </div>
+
+            <div class="quiz-body" id="quizBody"></div>
+
+            <div class="quiz-foot" id="quizFoot" style="display:none;">
+                <span class="quiz-step-label" id="quizStepLabel">Preparing…</span>
+                <div style="display:flex; gap:10px;">
+                    <button class="quiz-btn quiz-btn-ghost" id="quizPrevBtn" onclick="quizPrev()" disabled>
+                        <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
+                        Back
+                    </button>
+                    <button class="quiz-btn quiz-btn-primary" id="quizNextBtn" onclick="quizNext()" disabled>
+                        Next
+                        <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Firebase Web SDK v10 CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBT3Y2VlxtYKi5hMBXgXnrk0IScPMvD5sc",
+            authDomain: "skillforge-ai-3674f.firebaseapp.com",
+            projectId: "skillforge-ai-3674f",
+            storageBucket: "skillforge-ai-3674f.firebasestorage.app",
+            messagingSenderId: "313873956489",
+            appId: "1:313873956489:web:f16f4edc9c859013c01058",
+            measurementId: "G-MLYLR93BV5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        function updateProfileUI(profile) {
+            const avatarImg = document.getElementById('bwUserImg');
+            if (avatarImg && profile.photoURL) {
+                avatarImg.src = profile.photoURL;
+            }
+        }
+
+        const cachedUserStr = localStorage.getItem('user');
+        if (cachedUserStr) {
+            try {
+                const cachedUser = JSON.parse(cachedUserStr);
+                updateProfileUI(cachedUser);
+            } catch (e) { }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+                const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+                const exactEmail = user.email || pData.email || '';
+                let exactPhoto = user.photoURL || pData.photoURL;
+
+                if (exactPhoto && exactPhoto.includes('googleusercontent.com')) {
+                    exactPhoto = exactPhoto.replace(/=s\d+(-c)?/g, '=s400-c');
+                } else if (!exactPhoto) {
+                    exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=FFFFFF&color=000000&bold=true&rounded=true&size=256`;
+                }
+
+                const profile = {
+                    uid: user.uid,
+                    name: exactName,
+                    email: exactEmail,
+                    photoURL: exactPhoto
+                };
+                localStorage.setItem('user', JSON.stringify(profile));
+                updateProfileUI(profile);
+            } else {
+                const local = localStorage.getItem('user');
+                if (!local) {
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+
+        window.handleSignOut = async function () {
+            try {
+                await signOut(auth);
+            } catch (e) {
+                console.error("SignOut err:", e);
+            }
+            localStorage.removeItem('user');
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        };
+    </script>
+
+    <!-- Sidebar interaction -->
+    <script>
+        function updateActiveIndicator(animate = true) {
+            const menuList = document.getElementById('bwMenuList');
+            const indicator = document.getElementById('bwActiveIndicator');
+            if (!menuList || !indicator) return;
+
+            const activeItem = menuList.querySelector('.bw-nav-item.active');
+            if (!activeItem) {
+                indicator.style.opacity = '0';
+                return;
+            }
+
+            const menuRect = menuList.getBoundingClientRect();
+            const itemRect = activeItem.getBoundingClientRect();
+            const topOffset = itemRect.top - menuRect.top;
+            const itemHeight = itemRect.height;
+
+            if (!animate) {
+                indicator.style.transition = 'none';
+            } else {
+                indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+            }
+
+            indicator.style.transform = `translateY(${topOffset}px)`;
+            indicator.style.height = `${itemHeight}px`;
+            indicator.style.opacity = '1';
+
+            if (!animate) {
+                void indicator.offsetHeight;
+                requestAnimationFrame(() => {
+                    indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+                });
+            }
+        }
+
+        document.querySelectorAll('.bw-nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const href = item.getAttribute('href');
+                if (item.classList.contains('active')) return;
+
+                document.querySelectorAll('.bw-nav-item').forEach(el => el.classList.remove('active'));
+                item.classList.add('active');
+                updateActiveIndicator(true);
+
+                if (href && href !== '#' && !href.startsWith('javascript:')) {
+                    e.preventDefault();
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 240);
+                }
+            });
+        });
+
+        function toggleBwNav() {
+            const nav = document.getElementById('bwPillNav');
+            nav.classList.toggle('collapsed');
+            setTimeout(() => updateActiveIndicator(false), 360);
+        }
+
+        window.addEventListener('resize', () => updateActiveIndicator(false));
+        document.addEventListener('DOMContentLoaded', () => updateActiveIndicator(false));
+        window.addEventListener('load', () => {
+            updateActiveIndicator(false);
+        });
+
+        // Immediate instant pre-render
+        updateActiveIndicator(false);
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    </script>
+
+    <!-- ==========================================================================
+       ROADMAP DATA + VERTICAL TREE RENDERER (Pure HTML/CSS — scrollable)
+       ========================================================================== -->
+    <script>
+        const ROADMAP_DATA = {
+            mern: {
+                title: "MERN Stack Developer",
+                topics: [
+                    { title: "HTML", subtopics: ["Semantic HTML Elements", "Forms, Inputs & Validation", "Attributes & Formatting", "Media Elements (Audio, Video, Canvas)", "SEO & Accessibility (a11y) Basics"] },
+                    { title: "CSS", subtopics: ["Selectors, Specificity & Box Model", "Flexbox Layouts", "CSS Grid Layouts", "Responsive Design & Media Queries", "CSS Variables & Animations", "Tailwind CSS / Modern CSS Frameworks"] },
+                    { title: "JavaScript", subtopics: ["Data Types, Variables & Scope", "ES6+ Features (Destructuring, Spread/Rest)", "Functions (Arrow Functions, Higher-Order Functions)", "Array Methods (map, filter, reduce)", "DOM Manipulation & Event Handling", "Asynchronous JS (Promises, Async/Await)", "Fetch API & AJAX", "Modules (Import / Export)"] },
+                    { title: "Git & Dev Environment", subtopics: ["Basic Terminal / Command Line", "Git Core Commands (init, add, commit, push, pull)", "Branching & Merging Strategies", "Resolving Merge Conflicts", "GitHub / GitLab Workflows", "Package Managers (npm, yarn, pnpm)"] },
+                    { title: "React", subtopics: ["JSX Syntax & Rendering", "Components & Props", "State Management (useState)", "Side Effects & Data Fetching (useEffect)", "React Router (Navigation & Routing)", "Context API & Custom Hooks", "Global State Management (Redux Toolkit / Zustand)", "Form Handling & Schema Validation (React Hook Form, Zod)"] },
+                    { title: "Node.js", subtopics: ["Node.js Architecture & Event Loop", "CommonJS vs ES Modules", "Core Modules (fs, path, http, events)", "Environment Variables (dotenv)", "Error Handling & Debugging"] },
+                    { title: "Express", subtopics: ["Server Setup & Routing", "Middleware Functions", "RESTful API Architecture", "Request Handling (req.params, req.query, req.body)", "Error Handling Middleware", "File Uploads (Multer)"] },
+                    { title: "MongoDB", subtopics: ["NoSQL vs Relational Databases", "MongoDB Atlas & Compass Setup", "CRUD Operations", "Mongoose Schemas & Models", "Mongoose Validation & Middleware", "Data Relationships & Population", "Aggregation Pipeline"] },
+                    { title: "Authentication & Authorization", subtopics: ["Password Hashing (bcrypt)", "JSON Web Tokens (JWT)", "HttpOnly Cookies & Session Storage", "Protected Routes (Frontend & Backend)", "Role-Based Access Control (RBAC)", "OAuth / Social Logins (Optional)"] }
+                ]
+            },
+            ml: null,
+            ds: null,
+            gamedev: null
+        };
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        /* ==========================================================================
+           GAMIFIED PROGRESSION ENGINE
+           The journey starts with ONLY node 1 unlocked. Passing a node's AI quiz
+           (score >= PASS_MARK) unlocks the next node, like clearing a game level.
+           Progress is persisted per career track in localStorage.
+           ========================================================================== */
+        const PASS_MARK = 60; // percent required to clear a node
+
+        let CURRENT_TRACK = null;
+
+        /* ==========================================================================
+           COOLDOWN & TIMELOCK ENGINE
+           - 12-hour penalty lock: applies on quiz failure (< PASS_MARK) or page reload/leave during active quiz.
+           - 5-hour unlock delay: applies to the newly unlocked next node when previous node is cleared.
+           ========================================================================== */
+        const FAIL_PENALTY_HOURS = 12;
+        const UNLOCK_DELAY_HOURS = 5;
+        let drawerCooldownInterval = null;
+
+        function getCooldownKey(topicTitle) {
+            let uid = 'anonymous';
+            try {
+                const u = JSON.parse(localStorage.getItem('user') || '{}');
+                uid = u.uid || u.email || 'anonymous';
+            } catch (e) { }
+            const track = CURRENT_TRACK || 'mern';
+            return `sf_cd_${uid}_${track}_${encodeURIComponent(topicTitle)}`;
+        }
+
+        function getTopicCooldown(topicTitle) {
+            try {
+                const raw = localStorage.getItem(getCooldownKey(topicTitle));
+                if (!raw) return null;
+                const data = JSON.parse(raw);
+                if (data && data.until) {
+                    if (data.until > Date.now()) {
+                        return data;
+                    } else {
+                        localStorage.removeItem(getCooldownKey(topicTitle));
+                    }
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setTopicCooldown(topicTitle, type, hours) {
+            try {
+                const until = Date.now() + (hours * 60 * 60 * 1000);
+                const data = { type, until, hours, topic: topicTitle };
+                localStorage.setItem(getCooldownKey(topicTitle), JSON.stringify(data));
+            } catch (e) { }
+        }
+
+        function clearTopicCooldown(topicTitle) {
+            try {
+                localStorage.removeItem(getCooldownKey(topicTitle));
+            } catch (e) { }
+        }
+
+        function formatCooldownTime(ms) {
+            if (ms <= 0) return '00h 00m 00s';
+            const totalSecs = Math.floor(ms / 1000);
+            const hrs = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
+            return `${String(hrs).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+        }
+
+        function checkInterruptedQuiz() {
+            try {
+                const raw = localStorage.getItem('sf_quiz_in_progress');
+                if (raw) {
+                    const session = JSON.parse(raw);
+                    if (session && session.topic) {
+                        setTopicCooldown(session.topic, 'fail_penalty', FAIL_PENALTY_HOURS);
+                    }
+                    localStorage.removeItem('sf_quiz_in_progress');
+                }
+            } catch (e) { }
+        }
+
+        checkInterruptedQuiz();
+
+        function progressKey() {
+            let uid = 'anonymous';
+            try {
+                const u = JSON.parse(localStorage.getItem('user') || '{}');
+                uid = u.uid || u.email || 'anonymous';
+            } catch (e) { }
+            return `sf_progress_${uid}_${CURRENT_TRACK}`;
+        }
+
+        /** Returns the number of nodes the user has cleared. */
+        function getClearedCount() {
+            const raw = parseInt(localStorage.getItem(progressKey()), 10);
+            return Number.isFinite(raw) && raw > 0 ? raw : 0;
+        }
+
+        function setClearedCount(n) {
+            localStorage.setItem(progressKey(), String(n));
+        }
+
+        /** A node is unlocked only if every node before it has been cleared. */
+        function isNodeUnlocked(index) {
+            return index <= getClearedCount();
+        }
+
+        function nodeState(index) {
+            const cleared = getClearedCount();
+            if (index < cleared) return 'completed';
+            if (index === cleared) return 'current';
+            return 'locked';
+        }
+
+        function renderRoadmap(key) {
+            const data = ROADMAP_DATA[key];
+            const scrollArea = document.getElementById('roadmapScrollArea');
+            if (!scrollArea) return;
+
+            CURRENT_TRACK = key;
+
+            // Not-yet-available tracks
+            if (!data) {
+                scrollArea.innerHTML = `
+          <div class="roadmap-empty">
+            <div class="roadmap-empty-icon">
+              <i data-lucide="construction" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.1rem; color: #334155; font-weight: 700; margin: 0;">Coming Soon</h3>
+            <p style="font-size: 0.88rem; max-width: 420px; line-height: 1.5; margin: 0;">
+              This roadmap track hasn't been added yet. Only <strong>Full-Stack [MERN]</strong> is available right now.
+            </p>
+          </div>`;
+                if (window.lucide) window.lucide.createIcons();
+                return;
+            }
+
+            // Build roadmap.sh-style rows: a central yellow topic box on the spine,
+            // with its subtopics branching out to one side via dotted connectors.
+            // Sides alternate per topic so the tree zig-zags like roadmap.sh.
+            let rowsHtml = '';
+            data.topics.forEach((topic, i) => {
+                const side = (i % 2 === 0) ? 'left' : 'right';
+                const num = i + 1;
+
+                const subsHtml = topic.subtopics.map(sub =>
+                    `<div class="rm-sub">${escapeHtml(sub)}</div>`
+                ).join('');
+
+                const leftCol = (side === 'left')
+                    ? `<div class="rm-side rm-left">${subsHtml}</div>`
+                    : `<div class="rm-side rm-left"></div>`;
+                const rightCol = (side === 'right')
+                    ? `<div class="rm-side rm-right">${subsHtml}</div>`
+                    : `<div class="rm-side rm-right"></div>`;
+
+                const subsAttr = escapeHtml(JSON.stringify(topic.subtopics)).replace(/"/g, '&quot;');
+
+                const state = nodeState(i);
+                const stateClass = state === 'completed' ? 'rm-completed'
+                    : state === 'current' ? 'rm-current' : 'rm-locked';
+                const badge = state === 'completed'
+                    ? '<span class="rm-state-badge"><i data-lucide="check-circle-2" style="width:16px;height:16px;"></i></span>'
+                    : state === 'locked'
+                        ? '<span class="rm-state-badge"><i data-lucide="lock" style="width:15px;height:15px;"></i></span>'
+                        : '';
+
+                const cd = getTopicCooldown(topic.title);
+                const cdBadge = cd ? (cd.type === 'fail_penalty'
+                    ? '<span class="rm-cooldown-badge penalty" title="12-Hour Penalty Lock"><i data-lucide="clock" style="width:10px;height:10px;"></i> 12h Lock</span>'
+                    : '<span class="rm-cooldown-badge delay" title="5-Hour Preparation Period"><i data-lucide="hourglass" style="width:10px;height:10px;"></i> 5h Wait</span>') : '';
+
+                const boxTitle = state === 'locked'
+                    ? 'Locked — clear the previous node first'
+                    : cd
+                        ? (cd.type === 'fail_penalty' ? '12h Penalty Cooldown Active' : '5h Preparation Cooldown Active')
+                        : state === 'completed'
+                            ? 'Cleared ✓ — open panel'
+                            : 'Your current challenge — open panel';
+
+                rowsHtml += `
+          <div class="rm-row ${state === 'locked' ? 'rm-row-locked' : ''}" data-side="${side}">
+            ${leftCol}
+            <div class="rm-center">
+              <div class="rm-box ${stateClass}" role="button" tabindex="0"
+                   data-topic="${escapeHtml(topic.title).replace(/"/g, '&quot;')}"
+                   data-subs="${subsAttr}"
+                   data-index="${i}"
+                   data-state="${state}"
+                   onclick="openTopicDrawer(this)"
+                   title="${boxTitle}">
+                <span class="rm-box-num">${num}</span>
+                <span>${escapeHtml(topic.title)}</span>
+                ${cdBadge}
+                ${badge}
+              </div>
+            </div>
+            ${rightCol}
+          </div>`;
+            });
+
+            const cleared = getClearedCount();
+            const totalNodes = data.topics.length;
+            const pctDone = Math.round((cleared / totalNodes) * 100);
+            const hudHtml = `
+        <div class="rm-quest-hud">
+          <div style="min-width:0;">
+            <h4>Quest Progress</h4>
+            <p>${cleared === 0 ? 'Your journey begins — clear Node 1 to advance.' : cleared >= totalNodes ? 'All nodes cleared. You are Job Ready! 🏆' : `Next challenge: Node ${cleared + 1}`}</p>
+          </div>
+          <div class="rm-quest-track"><div class="rm-quest-fill" style="width:${pctDone}%;"></div></div>
+          <span class="rm-quest-count">${cleared}/${totalNodes}</span>
+        </div>`;
+
+            scrollArea.innerHTML = hudHtml + `
+        <div class="rm-board" id="rmBoard">
+          <div class="rm-spine"></div>
+          <svg class="rm-links" id="rmLinks" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="rm-end-node rm-start">
+            <i data-lucide="flag" style="width: 18px; height: 18px;"></i>
+            <span>${escapeHtml(data.title)}</span>
+          </div>
+          ${rowsHtml}
+          <div class="rm-end-node rm-goal">
+            <i data-lucide="trophy" style="width: 18px; height: 18px;"></i>
+            <span>Job Ready!</span>
+          </div>
+        </div>`;
+
+            // Scroll back to top so the Start node is visible first
+            scrollArea.scrollTop = 0;
+            if (window.lucide) window.lucide.createIcons();
+
+            // Draw the SVG connectors once layout has settled
+            requestAnimationFrame(() => requestAnimationFrame(drawConnectors));
+        }
+
+        // ── SVG CONNECTOR ENGINE ──
+        // Measures the real on-screen position of every subtopic box and its mother
+        // topic box, then draws a smooth cubic bezier that starts exactly on the
+        // subtopic's inner edge and ends exactly on the topic box's side edge.
+        // This guarantees the lines always visually touch BOTH boxes.
+        function drawConnectors() {
+            const board = document.getElementById('rmBoard');
+            const svg = document.getElementById('rmLinks');
+            if (!board || !svg) return;
+
+            const boardRect = board.getBoundingClientRect();
+
+            // Size the SVG canvas to the full scrollable board
+            svg.setAttribute('width', board.offsetWidth);
+            svg.setAttribute('height', board.offsetHeight);
+            svg.setAttribute('viewBox', `0 0 ${board.offsetWidth} ${board.offsetHeight}`);
+
+            let paths = '';
+
+            board.querySelectorAll('.rm-row').forEach(row => {
+                const side = row.dataset.side; // 'left' | 'right'
+                const box = row.querySelector('.rm-box');
+                const subs = row.querySelectorAll('.rm-sub');
+                if (!box || !subs.length) return;
+
+                const boxRect = box.getBoundingClientRect();
+
+                // Anchor point on the mother topic box (its inner-facing edge, vertically centered)
+                const boxX = (side === 'left')
+                    ? boxRect.left - boardRect.left
+                    : boxRect.right - boardRect.left;
+                const boxY = boxRect.top - boardRect.top + boxRect.height / 2;
+
+                subs.forEach(sub => {
+                    const subRect = sub.getBoundingClientRect();
+
+                    // Anchor point on the subtopic box (edge facing the spine)
+                    const subX = (side === 'left')
+                        ? subRect.right - boardRect.left
+                        : subRect.left - boardRect.left;
+                    const subY = subRect.top - boardRect.top + subRect.height / 2;
+
+                    // Horizontal-first cubic bezier => clean roadmap.sh-style curve
+                    const dx = (boxX - subX) * 0.55;
+                    const d = `M ${subX} ${subY} C ${subX + dx} ${subY}, ${boxX - dx} ${boxY}, ${boxX} ${boxY}`;
+
+                    paths += `<path class="rm-link-path" d="${d}" />`;
+                });
+            });
+
+            svg.innerHTML = paths;
+        }
+
+        // Redraw connectors whenever the layout can change
+        window.addEventListener('resize', () => {
+            clearTimeout(window.__rmResizeTimer);
+            window.__rmResizeTimer = setTimeout(drawConnectors, 120);
+        });
+        window.addEventListener('load', () => setTimeout(drawConnectors, 80));
+
+        // ── AUTO-LOAD PERSISTED CAREER ROADMAP ──
+        // The career is chosen & locked on the Profile page. Here we simply read
+        // the persisted selection and render its roadmap. It always stays visible
+        // across reloads and navigation, and is never removed from this page.
+        function loadPersistedRoadmap() {
+            const savedCareer = localStorage.getItem('sf_career');
+            if (savedCareer) {
+                renderRoadmap(savedCareer);
+            }
+            // If no career selected yet, the default "No Career Path Selected" empty
+            // state (with a link to Profile) remains visible.
+        }
+
+        loadPersistedRoadmap();
+    </script>
+
+    <!-- Configuration -->
+    <script src="api-config.js"></script>
+
+    <!-- ==========================================================================
+         AI QUIZ ENGINE (frontend controller for the LOCKED quiz modal)
+         ========================================================================== -->
+    <script>
+        const BACKEND_BASE = (window.SKILLFORGE_CONFIG && window.SKILLFORGE_CONFIG.BACKEND_URL) || 
+                             (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                               ? 'http://localhost:5000' 
+                               : 'https://skillforge-ai-backend-bbho.onrender.com');
+        const QUIZ_API = `${BACKEND_BASE}/api/quiz`;
+        const ELI5_API = `${BACKEND_BASE}/api/eli5`;
+        const QUIZ_QUESTION_COUNT = 5;
+        const QUIZ_DURATION_SECONDS = 5 * 60; // 5-minute countdown
+
+        let quizTimerInterval = null;
+        let quizSecondsRemaining = QUIZ_DURATION_SECONDS;
+
+        function startQuizTimer() {
+            stopQuizTimer();
+            quizSecondsRemaining = QUIZ_DURATION_SECONDS;
+            updateTimerDisplay();
+            const pill = document.getElementById('quizTimerPill');
+            if (pill) {
+                pill.style.display = 'inline-flex';
+                pill.classList.remove('timer-warning');
+            }
+            quizTimerInterval = setInterval(() => {
+                quizSecondsRemaining--;
+                if (quizSecondsRemaining <= 0) {
+                    stopQuizTimer();
+                    quizSecondsRemaining = 0;
+                    updateTimerDisplay();
+                    if (quizState.phase === 'quiz') {
+                        submitQuiz(true);
+                    }
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+            refreshQuizIcons();
+        }
+
+        function stopQuizTimer() {
+            if (quizTimerInterval) {
+                clearInterval(quizTimerInterval);
+                quizTimerInterval = null;
+            }
+        }
+
+        function hideQuizTimer() {
+            stopQuizTimer();
+            const pill = document.getElementById('quizTimerPill');
+            if (pill) pill.style.display = 'none';
+        }
+
+        function updateTimerDisplay() {
+            const el = document.getElementById('quizTimerDisplay');
+            const pill = document.getElementById('quizTimerPill');
+            if (!el) return;
+
+            const mins = Math.floor(quizSecondsRemaining / 60);
+            const secs = quizSecondsRemaining % 60;
+            el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            if (pill) {
+                if (quizSecondsRemaining <= 60) {
+                    pill.classList.add('timer-warning');
+                } else {
+                    pill.classList.remove('timer-warning');
+                }
+            }
+        }
+
+        const quizState = {
+            open: false,
+            locked: false,       // true while a quiz is in progress => cannot close
+            phase: 'idle',       // idle | loading | quiz | results | error
+            topic: '',
+            attemptId: null,
+            questions: [],
+            answers: [],
+            index: 0
+        };
+
+        /* ── LOCK ENFORCEMENT ──────────────────────────────────────────────────
+           While `quizState.locked` is true the modal absolutely cannot be closed:
+           - no close button exists
+           - ESC is swallowed
+           - clicking the backdrop only shakes the modal
+           - the browser tab warns before unload
+           ------------------------------------------------------------------- */
+        document.addEventListener('keydown', (e) => {
+            if (!quizState.open) return;
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                if (quizState.locked) shakeQuiz();
+            }
+        }, true);
+
+        document.getElementById('quizOverlay').addEventListener('mousedown', (e) => {
+            if (e.target.id === 'quizOverlay') {
+                e.preventDefault();
+                if (quizState.locked) shakeQuiz();
+            }
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (quizState.locked && (quizState.phase === 'quiz' || quizState.phase === 'loading')) {
+                if (quizState.topic) {
+                    setTopicCooldown(quizState.topic, 'fail_penalty', FAIL_PENALTY_HOURS);
+                }
+                localStorage.removeItem('sf_quiz_in_progress');
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        });
+
+        function shakeQuiz() {
+            const modal = document.getElementById('quizModal');
+            modal.classList.remove('quiz-shake');
+            void modal.offsetWidth;
+            modal.classList.add('quiz-shake');
+            setSubtitle('You must finish the quiz before leaving.');
+        }
+
+        function setSubtitle(text) {
+            const el = document.getElementById('quizSubtitle');
+            if (el) el.textContent = text;
+        }
+
+        function setProgress(pct) {
+            const el = document.getElementById('quizProgressFill');
+            if (el) el.style.width = Math.max(0, Math.min(100, pct)) + '%';
+        }
+
+        function getUserKey() {
+            try {
+                const u = JSON.parse(localStorage.getItem('user') || '{}');
+                return u.uid || u.email || 'anonymous';
+            } catch (e) {
+                return 'anonymous';
+            }
+        }
+
+        /* ── DRAWER: open the topic panel (the "hamburger menu") ───────────── */
+        let drawerTopic = { title: '', subtopics: [], el: null, index: 0, state: 'current' };
+
+        function setChrome({ showFoot, showProgress, showClose }) {
+            document.getElementById('quizFoot').style.display = showFoot ? 'flex' : 'none';
+            document.getElementById('quizProgressTrack').style.display = showProgress ? 'block' : 'none';
+            document.getElementById('quizCloseBtn').classList.toggle('hidden', !showClose);
+            document.getElementById('quizLockPill').style.display = showClose ? 'none' : 'inline-flex';
+        }
+
+        function openTopicDrawer(boxEl) {
+            // A locked quiz blocks switching topics
+            if (quizState.locked) { shakeQuiz(); return; }
+
+            let subs = [];
+            try { subs = JSON.parse(boxEl.dataset.subs || '[]'); } catch (e) { subs = []; }
+
+            if (drawerTopic.el) drawerTopic.el.classList.remove('rm-box-active');
+            boxEl.classList.add('rm-box-active');
+
+            drawerTopic = {
+                title: boxEl.dataset.topic || '',
+                subtopics: subs,
+                el: boxEl,
+                index: parseInt(boxEl.dataset.index, 10) || 0,
+                state: boxEl.dataset.state || 'current'
+            };
+
+            // A fresh topic starts with an empty tray
+            eli5Picked = null;
+            eli5Lesson = null;
+            eli5Busy = false;
+
+            quizState.open = true;
+            quizState.locked = false;
+            quizState.phase = 'menu';
+
+            hideQuizTimer();
+            document.getElementById('quizOverlay').classList.add('show');
+            document.getElementById('quizTitle').textContent = drawerTopic.title;
+            setSubtitle(`${subs.length} subtopics in this module`);
+            setChrome({ showFoot: false, showProgress: false, showClose: true });
+            renderDrawerMenu();
+        }
+
+        function renderDrawerMenu() {
+            if (drawerCooldownInterval) {
+                clearInterval(drawerCooldownInterval);
+                drawerCooldownInterval = null;
+            }
+
+            const chips = drawerTopic.subtopics
+                .map(s => {
+                    const safe = escapeHtml(s);
+                    const attr = safe.replace(/"/g, '&quot;');
+                    return `<span class="drawer-sub-chip pickable" data-sub="${attr}" role="button" tabindex="0" onclick="eli5Pick(this.dataset.sub)" title="Pick this subtopic">${safe}</span>`;
+                })
+                .join('');
+
+            const locked = drawerTopic.state === 'locked';
+            const completed = drawerTopic.state === 'completed';
+            const cooldown = getTopicCooldown(drawerTopic.title);
+
+            let actionHtml = '';
+
+            if (locked) {
+                actionHtml = `
+                <div class="drawer-locked-note">
+                  <div class="drawer-locked-icon">
+                    <i data-lucide="lock" style="width:26px;height:26px;"></i>
+                  </div>
+                  <p style="font-weight:800; color:#0F172A; margin:0 0 8px 0;">Node ${drawerTopic.index + 1} is Locked</p>
+                  <p style="font-size:0.86rem; color:#64748B; line-height:1.55; margin:0 auto; max-width:320px;">
+                    Clear <strong>Node ${getClearedCount() + 1}</strong> by scoring at least
+                    <strong>${PASS_MARK}%</strong> on its AI Quiz to unlock this challenge.
+                  </p>
+                </div>`;
+            } else if (cooldown) {
+                const isPenalty = cooldown.type === 'fail_penalty';
+                const initialMs = cooldown.until - Date.now();
+
+                actionHtml = `
+                <div class="drawer-cooldown-card ${isPenalty ? 'penalty' : 'delay'}">
+                  <div class="drawer-cooldown-icon">
+                    <i data-lucide="${isPenalty ? 'shield-alert' : 'hourglass'}" style="width:26px;height:26px;"></i>
+                  </div>
+                  <p class="drawer-cooldown-title">${isPenalty ? '12-Hour Penalty Lock' : '5-Hour Preparation Period'}</p>
+                  <p class="drawer-cooldown-desc">
+                    ${isPenalty
+                        ? 'You failed or reloaded during the previous quiz attempt. Review the subtopics below to prepare.'
+                        : 'You just unlocked this node! Take this time to study the curriculum. AI Quiz unlocks when the timer finishes.'}
+                  </p>
+                  <div class="cooldown-timer-badge">
+                    <i data-lucide="timer" style="width:16px;height:16px;"></i>
+                    <span id="cooldownLiveTimer">${formatCooldownTime(initialMs)}</span>
+                  </div>
+                </div>
+
+                <p class="drawer-section-label">Challenge</p>
+                <button class="drawer-menu-item" disabled style="opacity:0.55; cursor:not-allowed; border-color:#CBD5E1;">
+                  <span class="drawer-menu-icon" style="background:#F1F5F9; color:#94A3B8;">
+                    <i data-lucide="lock" style="width:21px;height:21px;"></i>
+                  </span>
+                  <span class="drawer-menu-text">
+                    <h4 style="color:#64748B;">AI Quiz (Locked)</h4>
+                    <p>Unlocks automatically when countdown reaches 00h 00m 00s.</p>
+                  </span>
+                </button>`;
+
+                // Live ticking timer
+                drawerCooldownInterval = setInterval(() => {
+                    const remaining = cooldown.until - Date.now();
+                    const el = document.getElementById('cooldownLiveTimer');
+                    if (remaining <= 0) {
+                        clearInterval(drawerCooldownInterval);
+                        drawerCooldownInterval = null;
+                        clearTopicCooldown(drawerTopic.title);
+                        renderDrawerMenu();
+                        if (CURRENT_TRACK) renderRoadmap(CURRENT_TRACK);
+                    } else if (el) {
+                        el.textContent = formatCooldownTime(remaining);
+                    }
+                }, 1000);
+
+            } else {
+                actionHtml = `
+                <p class="drawer-section-label">${completed ? 'Cleared ✓ — Replay' : 'Challenge'}</p>
+
+                <button class="drawer-menu-item" onclick="startQuizFromDrawer()">
+                  <span class="drawer-menu-icon">
+                    <i data-lucide="brain-circuit" style="width:21px;height:21px;"></i>
+                  </span>
+                  <span class="drawer-menu-text">
+                    <h4>AI Quiz</h4>
+                    <p>${completed
+                        ? 'You already cleared this node. Replay for practice.'
+                        : `Score ${PASS_MARK}% or higher to unlock the next node.`}</p>
+                  </span>
+                </button>`;
+            }
+
+            document.getElementById('quizBody').innerHTML = actionHtml + `
+            <p class="drawer-section-label" style="margin-top:22px;">Subtopics</p>
+            <p style="font-size:0.78rem; color:#94A3B8; font-weight:600; margin:-6px 0 10px 2px;">
+              Tap a subtopic to move it into the box below.
+            </p>
+            <div id="eli5ChipPool">${chips || '<p style="color:#94A3B8;font-size:0.85rem;">No subtopics listed.</p>'}</div>
+
+            <p class="drawer-section-label" style="margin-top:18px;">Selected Subtopic</p>
+            <div class="eli5-tray" id="eli5Tray"></div>
+
+            <button class="eli5-teach-btn" id="eli5TeachBtn" onclick="runEli5Lesson()" disabled>
+              <i data-lucide="baby" style="width:17px;height:17px;"></i>
+              Teach Me Like I'm 5
+            </button>
+
+            <div class="eli5-result" id="eli5Result"></div>`;
+
+            renderEli5Tray();
+            refreshQuizIcons();
+        }
+
+        /* ==================================================================
+           ELI5 — "TEACH ME LIKE I'M 5"
+           Only one subtopic sits in the tray at a time. Picking a new one
+           sends the previous chip back to the pool. The tray gates the button.
+           ================================================================== */
+        let eli5Picked = null;
+        let eli5Lesson = null;
+        let eli5Busy = false;
+
+        /** Move a subtopic into the tray, replacing whatever was there. */
+        function eli5Pick(subtopic) {
+            if (eli5Busy) return;
+            eli5Picked = subtopic;
+            eli5Lesson = null;
+            const result = document.getElementById('eli5Result');
+            if (result) result.innerHTML = '';
+            renderEli5Tray();
+        }
+
+        /** Send the picked subtopic back to its place in the pool. */
+        function eli5Clear() {
+            if (eli5Busy) return;
+            eli5Picked = null;
+            eli5Lesson = null;
+            const result = document.getElementById('eli5Result');
+            if (result) result.innerHTML = '';
+            renderEli5Tray();
+        }
+
+        /** Sync the pool chips, the tray, and the button's enabled state. */
+        function renderEli5Tray() {
+            const tray = document.getElementById('eli5Tray');
+            const btn = document.getElementById('eli5TeachBtn');
+            const pool = document.getElementById('eli5ChipPool');
+            if (!tray || !btn) return;
+
+            // A picked chip vanishes from the pool and reappears when removed
+            if (pool) {
+                pool.querySelectorAll('.drawer-sub-chip').forEach(chip => {
+                    chip.classList.toggle('is-picked', chip.dataset.sub === eli5Picked);
+                });
+            }
+
+            if (eli5Picked) {
+                tray.classList.add('filled');
+                tray.innerHTML = `
+                  <span class="eli5-picked-chip">
+                    ${escapeHtml(eli5Picked)}
+                    <button class="eli5-remove-btn" onclick="eli5Clear()" title="Remove" aria-label="Remove subtopic">
+                      <i data-lucide="x" style="width:12px;height:12px;"></i>
+                    </button>
+                  </span>`;
+                btn.disabled = false;
+            } else {
+                tray.classList.remove('filled');
+                tray.innerHTML = `<p class="eli5-tray-hint">Pick one subtopic above to unlock the lesson</p>`;
+                btn.disabled = true;
+            }
+
+            refreshQuizIcons();
+        }
+
+        /** Ask the backend for a beginner lesson on the picked subtopic. */
+        async function runEli5Lesson() {
+            if (!eli5Picked || eli5Busy) return;
+
+            const result = document.getElementById('eli5Result');
+            const btn = document.getElementById('eli5TeachBtn');
+            if (!result) return;
+
+            eli5Busy = true;
+            btn.disabled = true;
+            result.innerHTML = `
+              <div class="eli5-loading">
+                <span class="eli5-spinner"></span>
+                Writing your lesson — this takes a few seconds…
+              </div>`;
+
+            try {
+                const resp = await fetch(ELI5_API + '/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subtopic: eli5Picked,
+                        topic: drawerTopic.title
+                    })
+                });
+
+                const data = await resp.json().catch(() => ({}));
+                if (!resp.ok || !data.success || !data.lesson) {
+                    throw new Error(data.detail || data.error || 'The AI could not write your lesson.');
+                }
+
+                eli5Lesson = data.lesson;
+                renderEli5Lesson(data.lesson);
+
+            } catch (err) {
+                result.innerHTML = `<div class="eli5-error">${escapeHtml(err.message || 'Something went wrong.')}</div>`;
+            } finally {
+                eli5Busy = false;
+                btn.disabled = !eli5Picked;
+                refreshQuizIcons();
+            }
+        }
+
+        /** Paint the lesson into the drawer, with a PDF download beneath it. */
+        function renderEli5Lesson(lesson) {
+            const result = document.getElementById('eli5Result');
+            if (!result) return;
+
+            const sections = (lesson.sections || []).map(sec => {
+                const paras = String(sec.body || '')
+                    .split(/\n\s*\n/)
+                    .filter(Boolean)
+                    .map(p => `<p>${escapeHtml(p)}</p>`)
+                    .join('');
+
+                const code = sec.code
+                    ? `<div class="eli5-code">
+                         <span class="eli5-code-lang">${escapeHtml(sec.code.language || 'code')}</span>
+                         <pre>${escapeHtml(sec.code.snippet)}</pre>
+                       </div>
+                       ${sec.code.explain ? `<p class="eli5-code-note">${escapeHtml(sec.code.explain)}</p>` : ''}`
+                    : '';
+
+                return `<div class="eli5-sec">
+                          <h5>${escapeHtml(sec.heading)}</h5>
+                          ${paras}
+                          ${code}
+                        </div>`;
+            }).join('');
+
+            const takeaways = (lesson.keyTakeaways || []).length
+                ? `<div class="eli5-takeaways">
+                     <h5 style="margin:0 0 8px; font-size:0.8rem; font-weight:800; color:#5B21B6;">Key Takeaways</h5>
+                     <ul>${lesson.keyTakeaways.map(t => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+                   </div>`
+                : '';
+
+            const practice = (lesson.practiceQuestions || []).length
+                ? `<div class="eli5-practice">
+                     <h5 style="margin:0 0 10px; font-size:0.86rem; font-weight:800; color:#0F172A;">Practice Questions</h5>
+                     <ol>${lesson.practiceQuestions.map(q => `
+                       <li>${escapeHtml(q.question)}
+                         ${q.hint ? `<span><strong>Hint:</strong> ${escapeHtml(q.hint)}</span>` : ''}
+                         ${q.answer ? `<span><strong>Answer:</strong> ${escapeHtml(q.answer)}</span>` : ''}
+                       </li>`).join('')}</ol>
+                   </div>`
+                : '';
+
+            result.innerHTML = `
+              <div class="eli5-lesson-card">
+                <div class="eli5-lesson-head">
+                  <h4>${escapeHtml(lesson.title)}</h4>
+                  ${lesson.oneLiner ? `<p>${escapeHtml(lesson.oneLiner)}</p>` : ''}
+                </div>
+                <div class="eli5-lesson-body">
+                  ${sections}
+                  ${takeaways}
+                  ${practice}
+                </div>
+              </div>
+              <button class="eli5-download-btn" onclick="downloadEli5Pdf()">
+                <i data-lucide="download" style="width:16px;height:16px;"></i>
+                Download as PDF
+              </button>`;
+
+            refreshQuizIcons();
+        }
+
+        /** Build a print-ready document and hand it to the browser's PDF writer. */
+        function downloadEli5Pdf() {
+            if (!eli5Lesson) return;
+
+            const lesson = eli5Lesson;
+            const moduleName = drawerTopic.title || '';
+
+            const sections = (lesson.sections || []).map((sec, i) => {
+                const paras = String(sec.body || '')
+                    .split(/\n\s*\n/)
+                    .filter(Boolean)
+                    .map(p => `<p>${escapeHtml(p)}</p>`)
+                    .join('');
+
+                const code = sec.code
+                    ? `<div class="code">
+                         <span class="lang">${escapeHtml(sec.code.language || 'code')}</span>
+                         <pre>${escapeHtml(sec.code.snippet)}</pre>
+                       </div>
+                       ${sec.code.explain ? `<p class="note">${escapeHtml(sec.code.explain)}</p>` : ''}`
+                    : '';
+
+                return `<section>
+                          <h2>${i + 1}. ${escapeHtml(sec.heading)}</h2>
+                          ${paras}
+                          ${code}
+                        </section>`;
+            }).join('');
+
+            const takeaways = (lesson.keyTakeaways || []).length
+                ? `<section class="takeaways">
+                     <h2>Key Takeaways</h2>
+                     <ul>${lesson.keyTakeaways.map(t => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+                   </section>`
+                : '';
+
+            const practice = (lesson.practiceQuestions || []).length
+                ? `<section class="practice">
+                     <h2>Practice Questions</h2>
+                     <ol>${lesson.practiceQuestions.map(q => `
+                       <li>
+                         <p class="q">${escapeHtml(q.question)}</p>
+                         ${q.hint ? `<p class="hint"><strong>Hint:</strong> ${escapeHtml(q.hint)}</p>` : ''}
+                         ${q.answer ? `<p class="ans"><strong>Answer:</strong> ${escapeHtml(q.answer)}</p>` : ''}
+                       </li>`).join('')}</ol>
+                   </section>`
+                : '';
+
+            const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>${escapeHtml(lesson.title)} — SkillForge AI</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #1E293B; line-height: 1.65; margin: 0; }
+  .cover { border-bottom: 3px solid #7C3AED; padding-bottom: 16px; margin-bottom: 26px; }
+  .brand { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; font-weight: bold;
+           letter-spacing: 0.14em; text-transform: uppercase; color: #7C3AED; margin: 0 0 8px; }
+  h1 { font-size: 22pt; margin: 0 0 8px; color: #0F172A; line-height: 1.25; }
+  .oneliner { font-size: 12pt; font-style: italic; color: #5B21B6; margin: 0 0 6px; }
+  .meta { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #64748B; margin: 10px 0 0; }
+  h2 { font-family: Arial, Helvetica, sans-serif; font-size: 13pt; color: #0F172A;
+       margin: 24px 0 8px; padding-bottom: 5px; border-bottom: 1px solid #E2E8F0; }
+  p { font-size: 11pt; margin: 0 0 10px; }
+  section { page-break-inside: avoid; }
+  .code { background: #0F172A; border-radius: 6px; padding: 12px 14px; margin: 12px 0 8px;
+          page-break-inside: avoid; }
+  .code .lang { display: block; font-family: 'Courier New', monospace; font-size: 8pt;
+                font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em;
+                color: #A78BFA; margin-bottom: 7px; }
+  .code pre { margin: 0; font-family: 'Courier New', monospace; font-size: 9.5pt;
+              line-height: 1.55; color: #E2E8F0; white-space: pre-wrap; word-wrap: break-word; }
+  .note { font-size: 10pt; font-style: italic; color: #475569; margin: 0 0 12px; }
+  .takeaways { background: #F5F3FF; border-left: 4px solid #7C3AED; padding: 14px 18px;
+               margin-top: 26px; page-break-inside: avoid; }
+  .takeaways h2 { margin-top: 0; border: none; }
+  .takeaways li { font-size: 11pt; margin-bottom: 7px; color: #4C1D95; }
+  .practice li { margin-bottom: 16px; page-break-inside: avoid; }
+  .practice .q { font-weight: bold; margin-bottom: 5px; }
+  .practice .hint, .practice .ans { font-size: 10.5pt; color: #475569; margin: 0 0 4px; }
+  .foot { margin-top: 32px; padding-top: 12px; border-top: 1px solid #E2E8F0;
+          font-family: Arial, Helvetica, sans-serif; font-size: 8.5pt; color: #94A3B8;
+          text-align: center; }
+</style></head>
+<body>
+  <div class="cover">
+    <p class="brand">SkillForge AI &middot; Teach Me Like I'm 5</p>
+    <h1>${escapeHtml(lesson.title)}</h1>
+    ${lesson.oneLiner ? `<p class="oneliner">${escapeHtml(lesson.oneLiner)}</p>` : ''}
+    <p class="meta">
+      ${moduleName ? `Module: ${escapeHtml(moduleName)} &nbsp;&middot;&nbsp; ` : ''}
+      Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+    </p>
+  </div>
+  ${sections}
+  ${takeaways}
+  ${practice}
+  <p class="foot">Generated by SkillForge AI — save this page as PDF to keep your lesson.</p>
+</body></html>`;
+
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('Please allow pop-ups for this site so the PDF can be generated.');
+                return;
+            }
+            win.document.write(html);
+            win.document.close();
+            win.focus();
+            // Give the browser a beat to lay out fonts before opening the print dialog
+            setTimeout(() => win.print(), 450);
+        }
+
+        function startQuizFromDrawer() {
+            if (drawerTopic.state === 'locked') return;
+            const cd = getTopicCooldown(drawerTopic.title);
+            if (cd) {
+                renderDrawerMenu();
+                return;
+            }
+            startQuiz(drawerTopic.title, drawerTopic.subtopics);
+        }
+
+        /* ── OPEN THE QUIZ (inside the same right-side drawer) ─────────────── */
+        async function startQuiz(topic, subtopics) {
+            const cd = getTopicCooldown(topic);
+            if (cd) {
+                renderDrawerMenu();
+                return;
+            }
+
+            quizState.open = true;
+            quizState.locked = true;
+            quizState.phase = 'loading';
+            quizState.topic = topic;
+            quizState.attemptId = null;
+            quizState.questions = [];
+            quizState.answers = [];
+            quizState.index = 0;
+
+            // Track active quiz in progress for refresh penalty detection
+            localStorage.setItem('sf_quiz_in_progress', JSON.stringify({
+                topic,
+                track: CURRENT_TRACK,
+                startedAt: Date.now()
+            }));
+
+            document.getElementById('quizOverlay').classList.add('show');
+            document.getElementById('quizTitle').textContent = topic + ' — AI Quiz';
+            setSubtitle('Generating brand-new questions just for you…');
+            setChrome({ showFoot: true, showProgress: true, showClose: false });
+            setProgress(0);
+            renderQuizLoading();
+            refreshQuizIcons();
+
+            try {
+                const resp = await fetch(QUIZ_API + '/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic,
+                        subtopics,
+                        count: QUIZ_QUESTION_COUNT,
+                        userKey: getUserKey()
+                    })
+                });
+
+                const data = await resp.json().catch(() => ({}));
+
+                if (!resp.ok || !data.success || !Array.isArray(data.questions) || !data.questions.length) {
+                    throw new Error(data.error || 'The AI could not generate your quiz.');
+                }
+
+                quizState.attemptId = data.attemptId;
+                quizState.questions = data.questions;
+                quizState.answers = new Array(data.questions.length).fill(null);
+                quizState.index = 0;
+                quizState.phase = 'quiz';
+
+                setSubtitle('Every question here is generated fresh — nobody has ever seen it.');
+                renderQuizQuestion();
+                startQuizTimer();
+
+            } catch (err) {
+                localStorage.removeItem('sf_quiz_in_progress');
+                hideQuizTimer();
+                quizState.phase = 'error';
+                // Generation failed => nothing to complete, so release the lock
+                quizState.locked = false;
+                renderQuizError(err.message || 'Something went wrong.');
+            }
+        }
+
+        /* ── RENDERERS ─────────────────────────────────────────────────────── */
+        function renderQuizLoading() {
+            hideQuizTimer();
+            document.getElementById('quizBody').innerHTML = `
+        <div class="quiz-loading">
+          <div class="quiz-spinner"></div>
+          <div>
+            <p style="font-weight:800; color:#0F172A; margin:0 0 6px 0;">Generating your unique quiz…</p>
+            <p style="font-size:0.85rem; color:#64748B; margin:0; max-width:340px; line-height:1.5;">
+              The AI is writing questions that have never been asked before — not to you, not to anyone.
+            </p>
+          </div>
+        </div>`;
+            document.getElementById('quizStepLabel').textContent = 'Preparing…';
+            document.getElementById('quizPrevBtn').disabled = true;
+            document.getElementById('quizNextBtn').disabled = true;
+        }
+
+        function renderQuizError(msg) {
+            hideQuizTimer();
+            document.getElementById('quizBody').innerHTML = `
+        <div class="quiz-error">
+          <div style="width:56px; height:56px; border-radius:16px; background:#FEF2F2; color:#EF4444; display:flex; align-items:center; justify-content:center; margin:0 auto 14px auto;">
+            <i data-lucide="alert-triangle" style="width:26px; height:26px;"></i>
+          </div>
+          <p style="font-weight:800; color:#0F172A; margin:0 0 8px 0;">Quiz Generation Failed</p>
+          <p style="font-size:0.86rem; line-height:1.55; margin:0 auto; max-width:400px;">${escapeHtml(msg)}</p>
+        </div>`;
+
+            document.getElementById('quizStepLabel').textContent = '';
+            document.getElementById('quizPrevBtn').disabled = true;
+
+            const next = document.getElementById('quizNextBtn');
+            next.disabled = false;
+            next.innerHTML = 'Back to Menu';
+            next.onclick = backToDrawerMenu;
+
+            updateLockPill(false);
+            document.getElementById('quizCloseBtn').classList.remove('hidden');
+            refreshQuizIcons();
+        }
+
+        function backToDrawerMenu() {
+            if (drawerCooldownInterval) {
+                clearInterval(drawerCooldownInterval);
+                drawerCooldownInterval = null;
+            }
+            hideQuizTimer();
+            quizState.locked = false;
+            quizState.phase = 'menu';
+            document.getElementById('quizTitle').textContent = drawerTopic.title;
+            setSubtitle(`${drawerTopic.subtopics.length} subtopics in this module`);
+            setChrome({ showFoot: false, showProgress: false, showClose: true });
+            renderDrawerMenu();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizState.questions[quizState.index];
+            const chosen = quizState.answers[quizState.index];
+            const keys = ['A', 'B', 'C', 'D'];
+
+            const optionsHtml = q.options.map((opt, i) => `
+        <div class="quiz-option ${chosen === i ? 'selected' : ''}" onclick="selectQuizOption(${i})">
+          <span class="quiz-option-key">${keys[i] || (i + 1)}</span>
+          <span>${escapeHtml(opt)}</span>
+        </div>`).join('');
+
+            document.getElementById('quizBody').innerHTML = `
+        <p class="quiz-question">${escapeHtml(q.question)}</p>
+        ${optionsHtml}`;
+
+            const total = quizState.questions.length;
+            document.getElementById('quizStepLabel').textContent =
+                `Question ${quizState.index + 1} of ${total}`;
+            setProgress((quizState.index / total) * 100);
+
+            document.getElementById('quizPrevBtn').disabled = (quizState.index === 0);
+
+            const next = document.getElementById('quizNextBtn');
+            const isLast = quizState.index === total - 1;
+            next.onclick = quizNext;
+            next.innerHTML = isLast
+                ? 'Submit Quiz <i data-lucide="check" style="width:15px;height:15px;"></i>'
+                : 'Next <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>';
+            next.disabled = (chosen === null);
+
+            updateLockPill(true);
+            refreshQuizIcons();
+        }
+
+        function selectQuizOption(i) {
+            quizState.answers[quizState.index] = i;
+            renderQuizQuestion();
+        }
+
+        function quizPrev() {
+            if (quizState.phase !== 'quiz') return;
+            if (quizState.index > 0) {
+                quizState.index--;
+                renderQuizQuestion();
+            }
+        }
+
+        function quizNext() {
+            if (quizState.phase !== 'quiz') return;
+            if (quizState.answers[quizState.index] === null) return;
+
+            if (quizState.index < quizState.questions.length - 1) {
+                quizState.index++;
+                renderQuizQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        async function submitQuiz(isTimeout = false) {
+            stopQuizTimer();
+            localStorage.removeItem('sf_quiz_in_progress');
+
+            document.getElementById('quizNextBtn').disabled = true;
+            document.getElementById('quizPrevBtn').disabled = true;
+            setSubtitle(isTimeout ? '⏰ Time is up! Grading your answers…' : 'Grading your answers…');
+
+            try {
+                const resp = await fetch(QUIZ_API + '/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        attemptId: quizState.attemptId,
+                        answers: quizState.answers
+                    })
+                });
+
+                const data = await resp.json().catch(() => ({}));
+                if (!resp.ok || !data.success) {
+                    throw new Error(data.error || 'Could not grade your quiz.');
+                }
+
+                quizState.phase = 'results';
+                // Quiz is finished => the modal may now be closed
+                quizState.locked = false;
+
+                const passed = data.percentage >= PASS_MARK;
+
+                // ── COOLDOWN & PENALTY ENFORCEMENT ──
+                if (!passed) {
+                    // Penalty: Failed quiz => 12-hour lockout on this topic
+                    setTopicCooldown(drawerTopic.title, 'fail_penalty', FAIL_PENALTY_HOURS);
+                } else {
+                    // Cleared: remove any existing cooldown on this topic
+                    clearTopicCooldown(drawerTopic.title);
+                }
+
+                // ── GAME PROGRESSION: clearing this node unlocks the next one ──
+                let unlockedNew = false;
+                if (passed && drawerTopic.index === getClearedCount()) {
+                    setClearedCount(drawerTopic.index + 1);
+                    unlockedNew = true;
+
+                    // 5-Hour Preparation Period on newly unlocked next node
+                    const trackTopics = ROADMAP_DATA[CURRENT_TRACK]?.topics || [];
+                    const nextTopic = trackTopics[drawerTopic.index + 1];
+                    if (nextTopic) {
+                        setTopicCooldown(nextTopic.title, 'unlock_delay', UNLOCK_DELAY_HOURS);
+                    }
+                }
+
+                // ── DASHBOARD SYNCHRONIZATION: Record Quiz History & Activity ──
+                try {
+                    const uKey = getUserKey();
+                    const histKey = `sf_quiz_history_${uKey}`;
+                    const historyItem = {
+                        id: Date.now(),
+                        topic: data.topic || drawerTopic.title,
+                        track: CURRENT_TRACK || 'mern',
+                        score: data.score,
+                        total: data.total,
+                        percentage: data.percentage,
+                        passed: data.passed,
+                        date: new Date().toISOString()
+                    };
+                    const hist = JSON.parse(localStorage.getItem(histKey) || '[]');
+                    hist.unshift(historyItem);
+                    localStorage.setItem(histKey, JSON.stringify(hist.slice(0, 30)));
+
+                    // Record learning activity
+                    const actKey = `sf_learning_activity_${uKey}`;
+                    const act = JSON.parse(localStorage.getItem(actKey) || '{}');
+                    const dayName = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+                    act[dayName] = (act[dayName] || 0) + 0.5;
+                    localStorage.setItem(actKey, JSON.stringify(act));
+                } catch (e) { }
+
+                renderQuizResults(data, unlockedNew);
+
+            } catch (err) {
+                hideQuizTimer();
+                quizState.phase = 'error';
+                quizState.locked = false;
+                renderQuizError(err.message || 'Could not submit your quiz.');
+            }
+        }
+
+        function renderQuizResults(data, unlockedNew) {
+            hideQuizTimer();
+            const pct = data.percentage;
+            const cleared = pct >= PASS_MARK;
+            const ringColor = pct >= 80
+                ? 'linear-gradient(135deg,#10B981,#059669)'
+                : pct >= 60
+                    ? 'linear-gradient(135deg,#F59E0B,#D97706)'
+                    : 'linear-gradient(135deg,#EF4444,#DC2626)';
+
+            const rows = data.results.map((r, i) => `
+        <div class="quiz-result-row ${r.correct ? 'ok' : 'bad'}">
+          <p class="quiz-result-q">${i + 1}. ${escapeHtml(r.question)}</p>
+          <p class="quiz-result-meta">
+            <strong>Your answer:</strong>
+            ${r.selectedIndex >= 0 ? escapeHtml(r.options[r.selectedIndex]) : '<em>Not answered</em>'}
+            ${r.correct ? ' ✅' : ' ❌'}
+          </p>
+          ${r.correct ? '' : `<p class="quiz-result-meta"><strong>Correct answer:</strong> ${escapeHtml(r.options[r.correctIndex])}</p>`}
+          ${r.explanation ? `<p class="quiz-result-explain">${escapeHtml(r.explanation)}</p>` : ''}
+        </div>`).join('');
+
+            document.getElementById('quizBody').innerHTML = `
+        <div class="quiz-score-ring" style="background:${ringColor};">
+          <span style="font-size:2rem; line-height:1;">${pct}%</span>
+          <span style="font-size:0.72rem; opacity:0.9; margin-top:3px;">${data.score} / ${data.total}</span>
+        </div>
+        <p style="text-align:center; font-weight:800; font-size:1.05rem; color:#0F172A; margin:0 0 4px 0;">
+          ${data.passed ? 'Well done — you passed! 🎉' : 'Quiz Failed — 12-Hour Penalty Lock Applied'}
+        </p>
+        <p style="text-align:center; font-size:0.85rem; color:#64748B; margin:0 0 18px 0;">
+          Topic: <strong>${escapeHtml(data.topic)}</strong>
+        </p>
+        ${unlockedNew
+                    ? `<div style="background:#ECFDF5; border:1.5px solid #A7F3D0; border-radius:14px; padding:14px 16px; margin:0 0 18px 0; text-align:center;">
+                 <p style="margin:0; font-weight:800; color:#065F46; font-size:0.92rem;">🔓 Node ${drawerTopic.index + 2} Unlocked!</p>
+                 <p style="margin:4px 0 0 0; font-size:0.8rem; color:#047857; font-weight:600;">Challenge cleared! Node ${drawerTopic.index + 2}'s quiz will unlock in 5 hours after your study period.</p>
+               </div>`
+                    : cleared
+                        ? `<div style="background:#F5F3FF; border:1.5px solid #DDD6FE; border-radius:14px; padding:14px 16px; margin:0 0 18px 0; text-align:center;">
+                 <p style="margin:0; font-weight:800; color:#5B21B6; font-size:0.92rem;">✓ Node Cleared</p>
+                 <p style="margin:4px 0 0 0; font-size:0.8rem; color:#6D28D9; font-weight:600;">You had already unlocked the next node.</p>
+               </div>`
+                        : `<div style="background:#FEF2F2; border:1.5px solid #FECACA; border-radius:14px; padding:14px 16px; margin:0 0 18px 0; text-align:center;">
+                 <p style="margin:0; font-weight:800; color:#991B1B; font-size:0.92rem;">⏳ 12-Hour Penalty Cooldown</p>
+                 <p style="margin:4px 0 0 0; font-size:0.8rem; color:#B91C1C; font-weight:600;">You scored ${pct}% (Pass requirement: ${PASS_MARK}%). You must wait 12 hours before attempting this node's quiz again.</p>
+               </div>`}
+        ${rows}`;
+
+            document.getElementById('quizStepLabel').textContent = 'Quiz complete';
+            setProgress(100);
+            setSubtitle('These questions are now retired forever.');
+
+            document.getElementById('quizPrevBtn').disabled = true;
+
+            const next = document.getElementById('quizNextBtn');
+            next.disabled = false;
+            next.innerHTML = 'Done <i data-lucide="check" style="width:15px;height:15px;"></i>';
+            next.onclick = backToDrawerMenu;
+
+            updateLockPill(false);
+            document.getElementById('quizCloseBtn').classList.remove('hidden');
+            refreshQuizIcons();
+
+            // Repaint the roadmap so the newly unlocked node and cooldown badges light up
+            if (CURRENT_TRACK) {
+                const area = document.getElementById('roadmapScrollArea');
+                const scrollY = area ? area.scrollTop : 0;
+                renderRoadmap(CURRENT_TRACK);
+                requestAnimationFrame(() => { if (area) area.scrollTop = scrollY; });
+                drawerTopic.el = null;
+                if (cleared) drawerTopic.state = 'completed';
+            }
+        }
+
+        /* ── SHARED DRAWER HELPERS ─────────────────────────────────────────── */
+
+        /** Show / hide the red LOCKED pill in the drawer header. */
+        function updateLockPill(locked) {
+            const pill = document.getElementById('quizLockPill');
+            if (pill) pill.style.display = locked ? 'inline-flex' : 'none';
+            const closeBtn = document.getElementById('quizCloseBtn');
+            if (closeBtn) closeBtn.classList.toggle('hidden', locked);
+        }
+
+        /** Re-render any newly injected lucide icons inside the drawer. */
+        function refreshQuizIcons() {
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        /** Close the drawer — blocked while a quiz is in progress. */
+        function closeQuiz() {
+            if (quizState.locked) { shakeQuiz(); return; }
+
+            hideQuizTimer();
+            document.getElementById('quizOverlay').classList.remove('show');
+            quizState.open = false;
+            quizState.phase = 'idle';
+
+            if (drawerTopic.el) drawerTopic.el.classList.remove('rm-box-active');
+        }
+    </script>
+
+</body>
+
+</html>

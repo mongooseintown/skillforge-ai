@@ -1,137 +1,1135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer">
-  <title>Dashboard — SkillForge AI | Autonomous Career Roadmap Workspace</title>
-  <meta name="description" content="SkillForge AI Learner Dashboard — Autonomous AI Career Roadmaps & Metacognitive Skill Audits.">
-  
+  <title>Dashboard — SkillForge AI</title>
+  <meta name="description" content="SkillForge AI Learner Dashboard.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+
   <style>
-    .role-select-dropdown {
-      background: #18181D;
-      border: none;
-      border-left: 1px solid rgba(255, 255, 255, 0.18);
-      padding-left: 14px;
-      color: #FFFFFF;
-      font-family: inherit;
-      font-size: 0.95rem;
-      outline: none;
-      width: 100%;
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B5CF6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
+    :root {
+      --bg-dark: #07050E;
+      --sidebar-bg: #14141A;
+      --purple-primary: #7C3AED;
     }
 
-    .role-select-dropdown option {
-      background: #18181D;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      /* Strict Zero-Scroll */
+      background: var(--bg-dark);
       color: #FFFFFF;
-      padding: 10px;
+    }
+
+    /* ── AMBIENT BACKGROUND GLOW ── */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── APP DASHBOARD UNIFIED SHELL (ZERO SCROLL) ── */
+    .app-dashboard-shell {
+      display: flex;
+      height: calc(100vh - 48px);
+      max-height: calc(100vh - 48px);
+      margin: 24px;
+      padding: 0;
+      gap: 0;
+      position: relative;
+      z-index: 10;
+      align-items: stretch;
+      border-radius: 36px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.75);
+      background: #FFFFFF;
+      overflow: visible;
+    }
+
+    /* ==========================================================================
+       EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL (DOCKED TO WHITE CANVAS)
+       ========================================================================== */
+    .bw-pill-nav {
+      width: 240px;
+      background: #131318;
+      border-radius: 36px 0 0 36px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 16px 28px 20px;
+      position: relative;
+      z-index: 20;
+      flex-shrink: 0;
+      transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.3s ease;
+    }
+
+    .bw-pill-nav.collapsed {
+      width: 78px;
+      padding: 28px 14px;
+      align-items: center;
+    }
+
+    /* Top Header Row */
+    .bw-pill-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+
+    .bw-logo-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .bw-logo-bubble:hover {
+      transform: scale(1.06);
+    }
+
+    .bw-toggle-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .bw-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      transform: scale(1.08);
+    }
+
+    .bw-pill-nav.collapsed .bw-toggle-btn {
+      display: none;
+    }
+
+    /* Menu Items */
+    .bw-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      flex: 1;
+      position: relative;
+    }
+
+    /* ── DYNAMIC SLIDING ACTIVE INDICATOR ── */
+    .bw-active-indicator {
+      position: absolute;
+      left: 0;
+      right: -16px;
+      height: 52px;
+      background: #FFFFFF;
+      border-radius: 24px 0 0 24px;
+      z-index: 10;
+      pointer-events: none;
+      transition: transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease;
+      opacity: 0;
+      will-change: transform, height;
+    }
+
+    /* Pure Mathematical Inverted Curves (Smooth Concave Blend) */
+    .bw-active-indicator::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 0, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-active-indicator::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -20px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 0 100%, transparent 20px, #FFFFFF 20.5px);
+      pointer-events: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator {
+      right: 0;
+      width: 46px;
+      height: 46px;
+      left: 50%;
+      margin-left: -23px;
+      border-radius: 50%;
+    }
+
+    .bw-pill-nav.collapsed .bw-active-indicator::before,
+    .bw-pill-nav.collapsed .bw-active-indicator::after {
+      display: none;
+    }
+
+    .bw-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.96rem;
+      font-weight: 600;
+      transition: color 0.25s ease, transform 0.2s ease;
+      position: relative;
+      border-radius: 20px;
+      white-space: nowrap;
+      z-index: 20;
+      background: transparent !important;
+      cursor: pointer;
+    }
+
+    .bw-nav-item:hover {
+      color: #FFFFFF;
+    }
+
+    .bw-nav-item.active {
+      color: #000000 !important;
+      font-weight: 700;
+    }
+
+    .bw-nav-item.active .bw-nav-icon-wrap i,
+    .bw-nav-item.active .bw-nav-icon-wrap svg {
+      color: #000000 !important;
+      stroke: #000000 !important;
+    }
+
+    .bw-nav-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      transition: color 0.25s ease;
+    }
+
+    .bw-nav-label {
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-label {
+      display: none;
+    }
+
+    .bw-pill-nav.collapsed .bw-nav-item {
+      width: 46px;
+      height: 46px;
+      justify-content: center;
+      padding: 0;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
+
+    /* Bottom User Profile Section */
+    .bw-pill-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+
+    .bw-user-bubble {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .bw-user-bubble img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bw-logout-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.65);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .bw-logout-btn:hover {
+      color: #EF4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .bw-pill-nav.collapsed .bw-logout-btn {
+      display: none;
+    }
+
+    /* ==========================================================================
+       RIGHT FULL-BLEED WHITE CANVAS PAGE
+       ========================================================================== */
+    .bw-white-page-canvas {
+      flex: 1;
+      background: #FFFFFF;
+      border-radius: 0 36px 36px 0;
+      height: 100%;
+      max-height: 100%;
+      padding: 36px 44px;
+      color: #0F172A;
+      position: relative;
+      z-index: 10;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* White Canvas Header */
+    .white-canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 30px;
+    }
+
+    .canvas-page-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .canvas-page-subtitle {
+      font-size: 0.95rem;
+      color: #64748B;
+      margin: 4px 0 0 0;
+      font-weight: 500;
+    }
+
+    .canvas-page-subtitle span {
+      color: #0F172A;
+      font-weight: 700;
+    }
+
+    .canvas-body-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      gap: 16px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .canvas-body-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .canvas-body-content::-webkit-scrollbar-thumb {
+      background: #E2E8F0;
+      border-radius: 3px;
+    }
+
+    /* ==========================================================================
+       CURRENT NODE HERO — the focal "what am I learning right now" panel
+       ========================================================================== */
+    .node-hero {
+      position: relative;
+      border-radius: 24px;
+      padding: 26px 32px;
+      background:
+        radial-gradient(circle at 12% 30%, rgba(124, 58, 237, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at 88% 70%, rgba(124, 58, 237, 0.07) 0%, transparent 55%),
+        var(--purple-light-bg, #F5EDFF);
+      border: 1px solid var(--purple-border, #E4D5FB);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .node-hero-mesh {
+      position: absolute;
+      inset: 0;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .node-hero-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .node-hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-primary, #7C3AED);
+      margin: 0;
+    }
+
+    .node-hero-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 6px 0 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .node-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      max-width: 460px;
+      margin: 0 auto 20px;
+    }
+
+    .node-progress-track {
+      flex: 1;
+      height: 7px;
+      border-radius: 99px;
+      background: rgba(124, 58, 237, 0.15);
+      overflow: hidden;
+    }
+
+    .node-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--purple-primary, #7C3AED), var(--purple-glow, #8B5CF6));
+      transition: width 0.8s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+
+    .node-progress-pct {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--purple-primary, #7C3AED);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .node-countdown {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .countdown-unit {
+      min-width: 74px;
+    }
+
+    .countdown-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--purple-primary, #7C3AED);
+      letter-spacing: -0.02em;
+    }
+
+    .countdown-label {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted, #9CA3AF);
+    }
+
+    .countdown-colon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: rgba(124, 58, 237, 0.4);
+      line-height: 1.1;
+    }
+
+    .node-countdown-caption {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted, #9CA3AF);
+      margin: 0 0 20px;
+    }
+
+    .node-hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .node-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 24px;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .node-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .node-btn-primary {
+      background: var(--purple-primary, #7C3AED);
+      color: #FFFFFF;
+      box-shadow: 0 8px 22px rgba(124, 58, 237, 0.32);
+    }
+
+    .node-btn-primary:hover {
+      background: var(--purple-hover, #6D28D9);
+      box-shadow: 0 12px 28px rgba(124, 58, 237, 0.42);
+    }
+
+    .node-btn-ghost {
+      background: #FFFFFF;
+      color: #0F172A;
+      border-color: var(--purple-border, #E4D5FB);
+    }
+
+    .node-btn-ghost:hover {
+      border-color: var(--purple-primary, #7C3AED);
+      color: var(--purple-primary, #7C3AED);
+    }
+
+    /* ==========================================================================
+       ANALYTICS SECTION
+       ========================================================================== */
+    .section-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 8px 0 0;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1.25fr 0.85fr;
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light, #E5E7EB);
+      border-radius: 20px;
+      padding: 18px 20px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--purple-border, #E4D5FB);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .stat-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 14px;
+    }
+
+    .progress-card-body {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .donut-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      flex-shrink: 0;
+    }
+
+    .donut-wrap svg {
+      transform: rotate(-90deg);
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .donut-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0F172A;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .donut-caption {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted, #9CA3AF);
+      margin-top: 2px;
+    }
+
+    .legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body, #4B5563);
+    }
+
+    .legend-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.done {
+      background: var(--purple-primary, #7C3AED);
+      border-color: var(--purple-primary, #7C3AED);
+      color: #FFFFFF;
+    }
+
+    .legend-dot.pending {
+      background: #F1F5F9;
+    }
+
+    .accuracy-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .spark-wrap {
+      margin-top: 10px;
+    }
+
+    .accuracy-delta {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #10B981;
+      margin: 8px 0 0;
+    }
+
+    .hours-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 6px;
+      height: 58px;
+      margin-top: 14px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      height: 100%;
+    }
+
+    .bar-fill {
+      width: 100%;
+      max-width: 12px;
+      border-radius: 4px;
+      background: rgba(124, 58, 237, 0.25);
+      transition: height 0.6s ease, background 0.25s ease;
+    }
+
+    .bar-col.peak .bar-fill {
+      background: var(--purple-primary, #7C3AED);
+    }
+
+    .bar-day {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-muted, #9CA3AF);
+    }
+
+    /* ==========================================================================
+       BOTTOM ROW — quiz history + badges
+       ========================================================================== */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 16px;
+      padding-bottom: 4px;
+    }
+
+    .quiz-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .quiz-table th {
+      text-align: left;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted, #9CA3AF);
+      padding: 0 0 10px;
+      border-bottom: 1px solid var(--border-light, #E5E7EB);
+    }
+
+    .quiz-table td {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-body, #4B5563);
+      padding: 10px 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .quiz-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .quiz-table td:first-child {
+      color: #0F172A;
+      font-weight: 700;
+    }
+
+    .score-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--purple-primary, #7C3AED);
+    }
+
+    .review-btn {
+      padding: 4px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--purple-border, #E4D5FB);
+      background: var(--purple-light-bg, #F5EDFF);
+      color: var(--purple-primary, #7C3AED);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .review-btn:hover {
+      background: var(--purple-primary, #7C3AED);
+      color: #FFFFFF;
+    }
+
+    .quiz-empty {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted, #9CA3AF);
+      padding: 22px 0;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 74px;
+    }
+
+    .badge-hex {
+      width: 56px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      transition: transform 0.25s ease;
+    }
+
+    .badge-item:hover .badge-hex {
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    .badge-item.locked .badge-hex {
+      background: #E2E8F0 !important;
+      color: #94A3B8;
+    }
+
+    .badge-name {
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--text-body, #4B5563);
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .badge-item.locked .badge-name {
+      color: var(--text-muted, #9CA3AF);
+    }
+
+    @media (max-width: 1100px) {
+
+      .analytics-grid,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-dashboard-shell {
+        padding: 12px;
+        flex-direction: column;
+      }
+
+      .bw-pill-nav {
+        width: 100%;
+        border-radius: 24px 24px 0 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: none;
+      }
+
+      .bw-white-page-canvas {
+        border-radius: 0 0 24px 24px;
+        padding: 24px 20px;
+      }
     }
   </style>
 </head>
-<body style="background: #0E0E12; color: #FFFFFF; min-height: 100vh;">
 
-  <!-- DASHBOARD TOP NAVIGATION BAR -->
-  <nav style="background: rgba(24, 24, 29, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 14px 32px; position: sticky; top: 0; z-index: 1000;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
-      
-      <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFF; font-family: var(--font-heading); font-weight: 800; font-size: 1.15rem;">
-        <svg style="width: 26px; height: 26px; color: var(--purple-primary);" viewBox="0 0 40 40" fill="none">
-          <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
-          <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <span>SkillForge AI</span>
-        <span style="font-size: 0.7rem; background: var(--purple-primary); color: #FFF; padding: 2px 8px; border-radius: 999px; font-weight: 700;">PRO DASHBOARD</span>
-      </a>
+<body>
 
-      <div style="display: flex; align-items: center; gap: 20px;">
-        <a href="index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;">Home</a>
-        <a href="dashboard.html" style="color: #FFF; text-decoration: none; font-size: 0.9rem; font-weight: 700; border-bottom: 2px solid var(--purple-primary); padding-bottom: 2px;">Roadmap Generator</a>
-        
-        <!-- DYNAMIC USER PROFILE SECTION -->
-        <div id="userProfilePill" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); padding: 5px 14px 5px 6px; border-radius: 999px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
-          <img id="userAvatarImg" referrerpolicy="no-referrer" crossorigin="anonymous" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--purple-primary);" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(document.getElementById('userNameSpan')?.textContent || 'User') + '&background=7C3AED&color=ffffff&bold=true&rounded=true';">
-          <div style="display: flex; flex-direction: column;">
-            <span id="userNameSpan" style="font-size: 0.88rem; font-weight: 700; color: #FFF; line-height: 1.2;">Loading...</span>
-            <span id="userProviderPill" style="font-size: 0.65rem; color: #A78BFA; font-weight: 600; text-transform: uppercase;">Authenticated</span>
-          </div>
-        </div>
+  <div class="ambient-bg"></div>
 
-        <!-- REAL SIGN OUT BUTTON -->
-        <button id="signOutBtn" onclick="handleSignOut()" class="btn-pill btn-purple" style="padding: 8px 16px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-          <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
-          <span>Sign Out</span>
+  <!-- UNIFIED DASHBOARD APPLICATION SHELL -->
+  <div class="app-dashboard-shell">
+
+    <!-- EXACT BLACK & WHITE GLASSMORPHIC SIDEBAR PILL -->
+    <aside class="bw-pill-nav" id="bwPillNav">
+
+      <!-- Top Header Row -->
+      <div class="bw-pill-header">
+        <a href="index.html" class="bw-logo-bubble" title="SkillForge AI">
+          <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+            <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#FFFFFF" />
+            <path d="M8 20L18 28L28 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </a>
+        <button class="bw-toggle-btn" id="bwNavToggleBtn" onclick="toggleBwNav()" title="Toggle Menu">
+          <i data-lucide="chevron-left" id="bwToggleIcon" style="width: 14px; height: 14px;"></i>
         </button>
       </div>
 
-    </div>
-  </nav>
+      <!-- Navigation Menu Items (Working Routes Only) -->
+      <nav class="bw-menu-list" id="bwMenuList">
+        <!-- Dynamic Sliding Active Indicator -->
+        <div class="bw-active-indicator" id="bwActiveIndicator"></div>
 
-  <!-- DASHBOARD MAIN CONTAINER -->
-  <main style="max-width: 1100px; margin: 36px auto; padding: 0 20px;">
-
-    <!-- WELCOME BANNER -->
-    <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(24, 24, 29, 0.9) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 24px; padding: 36px 32px; margin-bottom: 36px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-        <div>
-          <div style="font-size: 0.82rem; color: var(--purple-glow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
-            Feature #1 & #2: Autonomous AI Workspace
+        <!-- Item 1: Home Landing -->
+        <a href="index.html" class="bw-nav-item" data-nav="home" title="Landing Page">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="home" style="width: 19px; height: 19px;"></i>
           </div>
-          <h1 style="font-size: 2.2rem; font-family: var(--font-heading); color: #FFF; margin-bottom: 8px;">
-            Forge Your Personalized <span style="color: var(--purple-glow);">Career Roadmap</span>
-          </h1>
-          <p style="color: rgba(255,255,255,0.75); font-size: 1.05rem; max-width: 620px;">
-            Type your existing skills and choose a target career role from the curated dropdown list below to generate your roadmap and diagnostic audit.
-          </p>
+          <span class="bw-nav-label">Home</span>
+        </a>
+
+        <!-- Item 2: Dashboard (Active - Merged with White Canvas) -->
+        <a href="dashboard.html" class="bw-nav-item active" data-nav="dashboard" title="Learner Dashboard">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="layout-dashboard" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Dashboard</span>
+        </a>
+
+        <!-- Item 3: Profile -->
+        <a href="profile.html" class="bw-nav-item" data-nav="profile" title="User Profile">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="user" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Profile</span>
+        </a>
+
+        <!-- Item 4: Verify & Credentials -->
+        <a href="verify.html" class="bw-nav-item" data-nav="verify" title="Certificate Verification">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="shield-check" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Verify</span>
+        </a>
+
+        <!-- Item 5: Projects -->
+        <a href="projects.html" class="bw-nav-item" data-nav="projects" title="My Projects">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="folder-code" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Projects</span>
+        </a>
+
+        <!-- Item 6: Theoretical Roadmap -->
+        <a href="theoretical-roadmap.html" class="bw-nav-item" data-nav="theoretical-roadmap"
+          title="Theoretical Roadmap">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="map" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Theoretical Roadmap</span>
+        </a>
+
+        <!-- Item 7: Jobs -->
+        <a href="jobs.html" class="bw-nav-item" data-nav="jobs" title="Career & Job Board">
+          <div class="bw-nav-icon-wrap">
+            <i data-lucide="briefcase" style="width: 19px; height: 19px;"></i>
+          </div>
+          <span class="bw-nav-label">Jobs</span>
+        </a>
+      </nav>
+
+      <!-- Bottom User / Logout Section -->
+      <div class="bw-pill-bottom">
+        <div class="bw-user-bubble" id="bwUserAvatarWrap" onclick="window.location.href='profile.html'"
+          title="User Profile">
+          <img id="bwUserImg"
+            src="https://ui-avatars.com/api/?name=User&background=FFFFFF&color=000000&bold=true&rounded=true"
+            alt="Avatar">
+        </div>
+        <button class="bw-logout-btn" onclick="handleSignOut()" title="Sign Out">
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT FULL-BLEED WHITE CANVAS PAGE (Covering Entire Viewport Area) -->
+    <main class="bw-white-page-canvas" id="dashboardWorkspace">
+
+      <!-- Top White Canvas Header -->
+      <div class="white-canvas-header">
+        <div class="header-left">
+          <h1 class="canvas-page-title">Dashboard</h1>
+          <p class="canvas-page-subtitle">Welcome back, <span id="welcomeUserName">Learner</span></p>
         </div>
       </div>
 
-      <!-- FEATURE #1 GENERATOR FORM WITH TARGET ROLE DROPDOWN -->
-      <form id="dashboardGenForm" style="margin-top: 28px;">
-        <div style="display: grid; grid-template-columns: 1fr 1.1fr auto; gap: 12px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.18); padding: 10px 12px 10px 20px; border-radius: var(--r-full); box-shadow: 0 16px 36px rgba(0,0,0,0.4);">
-          <input type="text" id="dashSkillsInput" placeholder="Current Skills (e.g. HTML, JS, Python)" style="background: transparent; border: none; color: #FFF; font-size: 0.95rem; outline: none; width: 100%;">
-          
-          <!-- TARGET ROLE DROPDOWN MENU -->
-          <select id="dashRoleInput" class="role-select-dropdown" required>
-            <option value="" disabled selected>Select Target Career Role...</option>
-            <option value="Full-Stack Developer (MERN / PERN)">Full-Stack Developer (MERN / PERN)</option>
-            <option value="Senior React & Frontend Engineer">Senior React & Frontend Engineer</option>
-            <option value="Backend & Cloud API Architect">Backend & Cloud API Architect</option>
-            <option value="Data Analyst & AI Engineer">Data Analyst & AI Engineer</option>
-            <option value="DevOps & Kubernetes Engineer">DevOps & Kubernetes Engineer</option>
-            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
-            <option value="Technical Product Manager">Technical Product Manager</option>
-          </select>
+      <!-- Workspace Body -->
+      <div class="canvas-body-content" id="canvasBodyContent">
 
-          <button type="submit" class="btn-pill btn-purple" style="white-space: nowrap; padding: 12px 24px; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-            <span>Forge AI Roadmap</span>
-          </button>
-        </div>
-      </form>
-    </div>
+        <!-- CURRENT NODE HERO -->
+        <section class="node-hero" id="currentNodeHero">
+          <svg class="node-hero-mesh" viewBox="0 0 600 240" preserveAspectRatio="none">
+            <circle cx="40" cy="40" r="3" fill="rgba(124,58,237,0.18)" />
+            <circle cx="560" cy="180" r="4" fill="rgba(124,58,237,0.14)" />
+            <circle cx="120" cy="200" r="2.5" fill="rgba(124,58,237,0.12)" />
+            <circle cx="480" cy="50" r="2" fill="rgba(124,58,237,0.16)" />
+            <line x1="40" y1="40" x2="120" y2="200" stroke="rgba(124,58,237,0.10)" stroke-width="1" />
+            <line x1="560" y1="180" x2="480" y2="50" stroke="rgba(124,58,237,0.10)" stroke-width="1" />
+          </svg>
+          <div class="node-hero-inner">
+            <p class="node-hero-eyebrow">CURRENT NODE</p>
+            <h2 class="node-hero-title" id="currentNodeTitle">Select your first node</h2>
+            <div class="node-progress-row">
+              <div class="node-progress-track">
+                <div class="node-progress-fill" id="nodeProgressFill" style="width: 0;"></div>
+              </div>
+              <span class="node-progress-pct" id="nodeProgressPct">0%</span>
+            </div>
 
-    <!-- WORKSPACE RESULTS CONTAINER -->
-    <div id="dashboardWorkspace">
-      <div style="background: rgba(24, 24, 29, 0.6); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 24px; padding: 60px 20px; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 12px; color: var(--purple-glow);">
-          <i data-lucide="map" style="width: 44px; height: 44px;"></i>
+            <!-- Countdown Timer -->
+            <div class="node-countdown">
+              <div class="countdown-unit">
+                <span class="countdown-value" id="cdHours">00</span>
+                <span class="countdown-label">Hours</span>
+              </div>
+              <span class="countdown-colon">:</span>
+              <div class="countdown-unit">
+                <span class="countdown-value" id="cdMinutes">00</span>
+                <span class="countdown-label">Minutes</span>
+              </div>
+              <span class="countdown-colon">:</span>
+              <div class="countdown-unit">
+                <span class="countdown-value" id="cdSeconds">00</span>
+                <span class="countdown-label">Seconds</span>
+              </div>
+            </div>
+            <p class="node-countdown-caption" id="countdownCaption">UNTIL NEXT CHALLENGE UNLOCK</p>
+
+            <div class="node-hero-actions">
+              <button class="node-btn node-btn-primary" id="btnStartExercise" onclick="onStartExercise()">
+                <i data-lucide="play-circle" style="width: 16px; height: 16px;"></i> START EXERCISE
+              </button>
+              <button class="node-btn node-btn-ghost" id="btnViewResource" onclick="onViewResource()">
+                <i data-lucide="book-open" style="width: 16px; height: 16px;"></i> VIEW RESOURCE
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ANALYTICS CARDS -->
+        <div class="section-heading" style="margin-top:4px;">Overview</div>
+        <div class="analytics-grid">
+
+          <!-- Roadmap Progress -->
+          <div class="stat-card" id="roadmapProgressCard">
+            <div class="stat-card-title">Roadmap Progress</div>
+            <div class="progress-card-body">
+              <div class="donut-wrap">
+                <svg width="96" height="96" viewBox="0 0 96 96">
+                  <circle cx="48" cy="48" r="42" fill="none" stroke="#F1F5F9" stroke-width="7" />
+                  <circle id="donutArc" cx="48" cy="48" r="42" fill="none" stroke="#7C3AED" stroke-width="7"
+                    stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" />
+                </svg>
+                <div class="donut-center">
+                  <span class="donut-value" id="donutPct">0%</span>
+                  <span class="donut-caption">COMPLETE</span>
+                </div>
+              </div>
+              <div class="legend-list" id="roadmapLegend"></div>
+            </div>
+          </div>
+
+          <!-- Quiz Accuracy -->
+          <div class="stat-card">
+            <div class="stat-card-title">Quiz Accuracy</div>
+            <div class="accuracy-value" id="quizAccuracyValue">--</div>
+            <div class="spark-wrap">
+              <svg id="accuracySpark" width="100%" height="50" viewBox="0 0 200 50" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="accuracy-delta" id="accuracyDelta"></div>
+          </div>
+
+          <!-- Learning Hours -->
+          <div class="stat-card">
+            <div class="stat-card-title">Learning Hours</div>
+            <div class="hours-value" id="learningHoursValue">--</div>
+            <div class="bar-chart" id="weekdayBars"></div>
+          </div>
         </div>
-        <h3 style="color: #FFF; font-size: 1.3rem; margin-bottom: 8px;">No Active Roadmap Generated Yet</h3>
-        <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; max-width: 480px; margin: 0 auto 24px;">
-          Select your target role above and click <strong>"Forge AI Roadmap"</strong> to generate your custom trajectory.
-        </p>
+
+        <!-- BOTTOM ROW -->
+        <div class="bottom-grid">
+          <!-- Recent Quiz History -->
+          <div class="stat-card">
+            <div class="stat-card-title">Recent Quiz History</div>
+            <table class="quiz-table">
+              <thead>
+                <tr>
+                  <th>QUIZ NAME</th>
+                  <th>SCORE</th>
+                  <th>DATE</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="quizHistoryBody">
+                <tr>
+                  <td colspan="4" class="quiz-empty">No quizzes yet — start learning!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Badges Earned -->
+          <div class="stat-card">
+            <div class="stat-card-title">Badges Earned</div>
+            <div class="badge-row" id="badgeRow"></div>
+          </div>
+        </div>
       </div>
-    </div>
 
-  </main>
+
+    </main>
+
+  </div>
 
   <!-- Firebase Web SDK v10 CDN -->
   <script type="module">
@@ -152,32 +1150,24 @@
     const auth = getAuth(app);
 
     function updateProfileUI(profile) {
-      const nameSpan = document.getElementById('userNameSpan');
-      const avatarImg = document.getElementById('userAvatarImg');
-      const providerPill = document.getElementById('userProviderPill');
-      
-      if (nameSpan && profile.name) {
-        nameSpan.textContent = profile.name;
-        nameSpan.title = profile.email || profile.name;
-      }
+      const avatarImg = document.getElementById('bwUserImg');
+      const welcomeName = document.getElementById('welcomeUserName');
       if (avatarImg && profile.photoURL) {
         avatarImg.src = profile.photoURL;
       }
-      if (providerPill && profile.authProvider) {
-        providerPill.textContent = profile.authProvider;
+      if (welcomeName && profile.name) {
+        welcomeName.textContent = profile.name;
       }
     }
 
-    // 1. Instant local cache load
     const cachedUserStr = localStorage.getItem('user');
     if (cachedUserStr) {
       try {
         const cachedUser = JSON.parse(cachedUserStr);
         updateProfileUI(cachedUser);
-      } catch (e) {}
+      } catch (e) { }
     }
 
-    // 2. Real-time Firebase Sync with high precision Google profile extraction
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
@@ -188,21 +1178,14 @@
         if (exactPhoto && exactPhoto.includes('googleusercontent.com')) {
           exactPhoto = exactPhoto.replace(/=s\d+(-c)?/g, '=s400-c');
         } else if (!exactPhoto) {
-          exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=7C3AED&color=ffffff&bold=true&rounded=true&size=256`;
+          exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=FFFFFF&color=000000&bold=true&rounded=true&size=256`;
         }
-
-        const isGoogle = user.providerData?.some(p => p.providerId === 'google.com');
-        const isGithub = user.providerData?.some(p => p.providerId === 'github.com');
-        const providerLabel = isGoogle ? 'Google' : isGithub ? 'GitHub' : 'Account';
 
         const profile = {
           uid: user.uid,
           name: exactName,
-          displayName: exactName,
           email: exactEmail,
-          photoURL: exactPhoto,
-          authProvider: providerLabel,
-          lastLogin: new Date().toISOString()
+          photoURL: exactPhoto
         };
         localStorage.setItem('user', JSON.stringify(profile));
         updateProfileUI(profile);
@@ -214,8 +1197,7 @@
       }
     });
 
-    // 3. Global Sign Out Function
-    window.handleSignOut = async function() {
+    window.handleSignOut = async function () {
       try {
         await signOut(auth);
       } catch (e) {
@@ -227,6 +1209,428 @@
     };
   </script>
 
-  <script src="app.js"></script>
+  <script>
+    function updateActiveIndicator(animate = true) {
+      const menuList = document.getElementById('bwMenuList');
+      const indicator = document.getElementById('bwActiveIndicator');
+      if (!menuList || !indicator) return;
+
+      const activeItem = menuList.querySelector('.bw-nav-item.active');
+      if (!activeItem) {
+        indicator.style.opacity = '0';
+        return;
+      }
+
+      const menuRect = menuList.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const topOffset = itemRect.top - menuRect.top;
+      const itemHeight = itemRect.height;
+
+      if (!animate) {
+        indicator.style.transition = 'none';
+      } else {
+        indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+      }
+
+      indicator.style.transform = `translateY(${topOffset}px)`;
+      indicator.style.height = `${itemHeight}px`;
+      indicator.style.opacity = '1';
+
+      if (!animate) {
+        void indicator.offsetHeight;
+        requestAnimationFrame(() => {
+          indicator.style.transition = 'transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), height 0.25s ease, opacity 0.2s ease';
+        });
+      }
+    }
+
+    // Attach smooth click handling to nav items
+    document.querySelectorAll('.bw-nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (item.classList.contains('active')) return;
+
+        document.querySelectorAll('.bw-nav-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        updateActiveIndicator(true);
+
+        if (href && href !== '#' && !href.startsWith('javascript:')) {
+          e.preventDefault();
+          setTimeout(() => {
+            window.location.href = href;
+          }, 240);
+        }
+      });
+    });
+
+    function toggleBwNav() {
+      const nav = document.getElementById('bwPillNav');
+      nav.classList.toggle('collapsed');
+      setTimeout(() => updateActiveIndicator(false), 360);
+    }
+
+    window.addEventListener('resize', () => updateActiveIndicator(false));
+    document.addEventListener('DOMContentLoaded', () => updateActiveIndicator(false));
+    window.addEventListener('load', () => {
+      updateActiveIndicator(false);
+    });
+
+    // Immediate instant pre-render
+    updateActiveIndicator(false);
+  </script>
+
+  <!-- ==========================================================================
+       DASHBOARD FUNCTIONAL CONTROLLER ENGINE
+       Synchronized with Roadmap, Quiz AI, Profile, and Activity Storage.
+       ========================================================================== -->
+  <script>
+    const ROADMAP_DATA = {
+      mern: {
+        title: "MERN Stack Developer",
+        topics: [
+          { title: "HTML", subtopics: ["Semantic HTML Elements", "Forms, Inputs & Validation", "Attributes & Formatting", "Media Elements (Audio, Video, Canvas)", "SEO & Accessibility (a11y) Basics"] },
+          { title: "CSS", subtopics: ["Selectors, Specificity & Box Model", "Flexbox Layouts", "CSS Grid Layouts", "Responsive Design & Media Queries", "CSS Variables & Animations", "Tailwind CSS / Modern CSS Frameworks"] },
+          { title: "JavaScript", subtopics: ["Data Types, Variables & Scope", "ES6+ Features (Destructuring, Spread/Rest)", "Functions (Arrow Functions, Higher-Order Functions)", "Array Methods (map, filter, reduce)", "DOM Manipulation & Event Handling", "Asynchronous JS (Promises, Async/Await)", "Fetch API & AJAX", "Modules (Import / Export)"] },
+          { title: "Git & Dev Environment", subtopics: ["Basic Terminal / Command Line", "Git Core Commands (init, add, commit, push, pull)", "Branching & Merging Strategies", "Resolving Merge Conflicts", "GitHub / GitLab Workflows", "Package Managers (npm, yarn, pnpm)"] },
+          { title: "React", subtopics: ["JSX Syntax & Rendering", "Components & Props", "State Management (useState)", "Side Effects & Data Fetching (useEffect)", "React Router (Navigation & Routing)", "Context API & Custom Hooks", "Global State Management (Redux Toolkit / Zustand)", "Form Handling & Schema Validation (React Hook Form, Zod)"] },
+          { title: "Node.js", subtopics: ["Node.js Architecture & Event Loop", "CommonJS vs ES Modules", "Core Modules (fs, path, http, events)", "Environment Variables (dotenv)", "Error Handling & Debugging"] },
+          { title: "Express", subtopics: ["Server Setup & Routing", "Middleware Functions", "RESTful API Architecture", "Request Handling (req.params, req.query, req.body)", "Error Handling Middleware", "File Uploads (Multer)"] },
+          { title: "MongoDB", subtopics: ["NoSQL vs Relational Databases", "MongoDB Atlas & Compass Setup", "CRUD Operations", "Mongoose Schemas & Models", "Mongoose Validation & Middleware", "Data Relationships & Population", "Aggregation Pipeline"] },
+          { title: "Authentication & Authorization", subtopics: ["Password Hashing (bcrypt)", "JSON Web Tokens (JWT)", "HttpOnly Cookies & Session Storage", "Protected Routes (Frontend & Backend)", "Role-Based Access Control (RBAC)", "OAuth / Social Logins (Optional)"] }
+        ]
+      }
+    };
+
+    let dashboardTimerInterval = null;
+
+    function getUserKey() {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        return u.uid || u.email || 'anonymous';
+      } catch (e) {
+        return 'anonymous';
+      }
+    }
+
+    function getCurrentTrack() {
+      return localStorage.getItem('sf_career') || 'mern';
+    }
+
+    function getClearedCount(track) {
+      const uid = getUserKey();
+      const raw = parseInt(localStorage.getItem(`sf_progress_${uid}_${track}`), 10);
+      return Number.isFinite(raw) && raw > 0 ? raw : 0;
+    }
+
+    function getTopicCooldown(track, topicTitle) {
+      const uid = getUserKey();
+      const key = `sf_cd_${uid}_${track}_${encodeURIComponent(topicTitle)}`;
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (data && data.until) {
+          if (data.until > Date.now()) {
+            return data;
+          } else {
+            localStorage.removeItem(key);
+          }
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function formatTimeRemaining(ms) {
+      if (ms <= 0) return { h: '00', m: '00', s: '00' };
+      const totalSecs = Math.floor(ms / 1000);
+      const h = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
+      const m = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
+      const s = String(totalSecs % 60).padStart(2, '0');
+      return { h, m, s };
+    }
+
+    function initDashboard() {
+      const trackKey = getCurrentTrack();
+      const trackData = ROADMAP_DATA[trackKey] || ROADMAP_DATA.mern;
+      const topics = trackData.topics;
+      const cleared = getClearedCount(trackKey);
+      const total = topics.length;
+      const pct = Math.round((cleared / total) * 100);
+
+      // Determine Current Node
+      const currentIndex = Math.min(cleared, total - 1);
+      const currentTopic = topics[currentIndex];
+      const isAllDone = cleared >= total;
+
+      // 1. Current Node Hero
+      const titleEl = document.getElementById('currentNodeTitle');
+      const fillEl = document.getElementById('nodeProgressFill');
+      const pctEl = document.getElementById('nodeProgressPct');
+      const captionEl = document.getElementById('countdownCaption');
+      const startBtn = document.getElementById('btnStartExercise');
+
+      if (titleEl) {
+        titleEl.textContent = isAllDone
+          ? `All Nodes Cleared — ${trackData.title} Master! 🏆`
+          : `Node ${currentIndex + 1}: ${currentTopic.title}`;
+      }
+      if (fillEl) fillEl.style.width = `${pct}%`;
+      if (pctEl) pctEl.textContent = `${pct}%`;
+
+      // 2. Cooldown Timer Handling
+      if (dashboardTimerInterval) {
+        clearInterval(dashboardTimerInterval);
+        dashboardTimerInterval = null;
+      }
+
+      const cd = isAllDone ? null : getTopicCooldown(trackKey, currentTopic.title);
+      const hEl = document.getElementById('cdHours');
+      const mEl = document.getElementById('cdMinutes');
+      const sEl = document.getElementById('cdSeconds');
+
+      if (cd) {
+        const updateTicking = () => {
+          const rem = cd.until - Date.now();
+          if (rem <= 0) {
+            clearInterval(dashboardTimerInterval);
+            dashboardTimerInterval = null;
+            if (hEl) hEl.textContent = '00';
+            if (mEl) mEl.textContent = '00';
+            if (sEl) sEl.textContent = '00';
+            if (captionEl) captionEl.textContent = 'CHALLENGE UNLOCKED — READY TO START!';
+            if (startBtn) {
+              startBtn.innerHTML = '<i data-lucide="play-circle" style="width: 16px; height: 16px;"></i> START EXERCISE';
+              startBtn.style.opacity = '1';
+            }
+            if (window.lucide) window.lucide.createIcons();
+          } else {
+            const formatted = formatTimeRemaining(rem);
+            if (hEl) hEl.textContent = formatted.h;
+            if (mEl) mEl.textContent = formatted.m;
+            if (sEl) sEl.textContent = formatted.s;
+            if (captionEl) {
+              captionEl.textContent = cd.type === 'fail_penalty'
+                ? 'UNTIL NEXT CHALLENGE UNLOCK (12H PENALTY)'
+                : 'UNTIL NEXT CHALLENGE UNLOCK (5H PREPARATION PERIOD)';
+            }
+          }
+        };
+        updateTicking();
+        dashboardTimerInterval = setInterval(updateTicking, 1000);
+      } else {
+        if (hEl) hEl.textContent = '00';
+        if (mEl) mEl.textContent = '00';
+        if (sEl) sEl.textContent = '00';
+        if (captionEl) {
+          captionEl.textContent = isAllDone
+            ? 'ALL ROADMAP CHALLENGES COMPLETED 🏆'
+            : 'CHALLENGE UNLOCKED — READY TO START!';
+        }
+      }
+
+      // 3. Roadmap Progress Donut & Legend
+      const donutArc = document.getElementById('donutArc');
+      const donutPct = document.getElementById('donutPct');
+      if (donutPct) donutPct.textContent = `${pct}%`;
+      if (donutArc) {
+        const circumference = 263.9;
+        const offset = circumference - (circumference * (pct / 100));
+        donutArc.style.strokeDashoffset = offset;
+      }
+
+      const legendEl = document.getElementById('roadmapLegend');
+      if (legendEl) {
+        let legendHtml = '';
+        const displayNodes = topics.slice(0, 4);
+        displayNodes.forEach((t, i) => {
+          const isDone = i < cleared;
+          const isCurr = i === cleared;
+          legendHtml += `
+            <div class="legend-row" style="cursor:pointer;" onclick="window.location.href='theoretical-roadmap.html'" title="Open in Roadmap">
+              <span class="legend-dot ${isDone ? 'done' : 'pending'}" style="${isCurr ? 'border-color:#7C3AED; background:rgba(124,58,237,0.15); color:#7C3AED;' : ''}">
+                ${isDone ? '<i data-lucide="check" style="width:11px;height:11px;"></i>' : isCurr ? '<i data-lucide="play" style="width:9px;height:9px;"></i>' : ''}
+              </span>
+              <span style="${isCurr ? 'color:#7C3AED; font-weight:700;' : ''}">${i + 1}. ${t.title}</span>
+            </div>
+          `;
+        });
+        if (topics.length > 4) {
+          legendHtml += `
+            <div class="legend-row" style="font-size:0.75rem; color:#94A3B8; cursor:pointer;" onclick="window.location.href='theoretical-roadmap.html'">
+              + ${topics.length - 4} more topics in roadmap &rarr;
+            </div>
+          `;
+        }
+        legendEl.innerHTML = legendHtml;
+      }
+
+      // 4. Quiz Accuracy & Sparkline Trend
+      const uKey = getUserKey();
+      let quizHistory = [];
+      try {
+        quizHistory = JSON.parse(localStorage.getItem(`sf_quiz_history_${uKey}`) || '[]');
+      } catch (e) {
+        quizHistory = [];
+      }
+
+      const accuracyValEl = document.getElementById('quizAccuracyValue');
+      const sparkEl = document.getElementById('accuracySpark');
+      const deltaEl = document.getElementById('accuracyDelta');
+
+      if (quizHistory.length > 0) {
+        const totalScore = quizHistory.reduce((acc, q) => acc + (q.percentage || 0), 0);
+        const avg = Math.round(totalScore / quizHistory.length);
+        const passedCount = quizHistory.filter(q => q.passed).length;
+        const passRate = Math.round((passedCount / quizHistory.length) * 100);
+
+        if (accuracyValEl) accuracyValEl.textContent = `${avg}%`;
+        if (deltaEl) {
+          deltaEl.innerHTML = `<i data-lucide="trending-up" style="width:13px;height:13px;display:inline-block;vertical-align:middle;"></i> ${passRate}% Pass Rate (${passedCount}/${quizHistory.length} cleared)`;
+        }
+
+        if (sparkEl) {
+          const pts = quizHistory.slice(0, 8).reverse().map(q => q.percentage || 0);
+          if (pts.length === 1) pts.unshift(pts[0]);
+          const width = 200;
+          const height = 45;
+          const step = width / (pts.length - 1);
+          const coords = pts.map((val, idx) => {
+            const x = idx * step;
+            const y = height - ((val / 100) * (height - 8)) - 4;
+            return `${x},${y}`;
+          });
+          const pathD = `M ${coords.join(' L ')}`;
+          const areaD = `${pathD} L ${width},${height} L 0,${height} Z`;
+
+          sparkEl.innerHTML = `
+            <defs>
+              <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.0"/>
+              </linearGradient>
+            </defs>
+            <path d="${areaD}" fill="url(#sparkGrad)" />
+            <path d="${pathD}" fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          `;
+        }
+      } else {
+        if (accuracyValEl) accuracyValEl.textContent = cleared > 0 ? '80%' : '--';
+        if (deltaEl) deltaEl.textContent = 'Take your first quiz to calculate accuracy';
+        if (sparkEl) {
+          sparkEl.innerHTML = `
+            <line x1="0" y1="25" x2="200" y2="25" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="4 4" />
+          `;
+        }
+      }
+
+      // 5. Learning Hours & Weekday Activity
+      const hoursValEl = document.getElementById('learningHoursValue');
+      const weekdayBarsEl = document.getElementById('weekdayBars');
+
+      let actData = {};
+      try {
+        actData = JSON.parse(localStorage.getItem(`sf_learning_activity_${uKey}`) || '{}');
+      } catch (e) {
+        actData = {};
+      }
+
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const baseDaily = [1.2, 1.8, 1.0, 2.4, 3.0, 1.5, 0.8];
+      const activityHours = days.map((d, i) => (actData[d] !== undefined ? actData[d] : baseDaily[i] * (cleared > 0 ? 1 : 0.4)));
+      const totalHours = activityHours.reduce((a, b) => a + b, 0).toFixed(1);
+      const maxHours = Math.max(...activityHours, 1);
+
+      if (hoursValEl) hoursValEl.textContent = `${totalHours} hrs`;
+      if (weekdayBarsEl) {
+        const peakIndex = activityHours.indexOf(Math.max(...activityHours));
+        weekdayBarsEl.innerHTML = days.map((d, i) => {
+          const hPct = Math.round((activityHours[i] / maxHours) * 100);
+          const isPeak = (i === peakIndex);
+          return `
+            <div class="bar-col ${isPeak ? 'peak' : ''}">
+              <div class="bar-fill" style="height: ${Math.max(12, hPct)}%;"></div>
+              <span class="bar-day">${d}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 6. Recent Quiz History Table
+      const historyBody = document.getElementById('quizHistoryBody');
+      if (historyBody) {
+        if (quizHistory.length > 0) {
+          historyBody.innerHTML = quizHistory.slice(0, 5).map(q => {
+            const dateStr = q.date ? new Date(q.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Recent';
+            const passStyle = q.passed ? 'color:#10B981;' : 'color:#EF4444;';
+            return `
+              <tr>
+                <td>${escapeHtml(q.topic || 'Web Fundamentals')}</td>
+                <td><span class="score-pill" style="${passStyle}">${q.score}/${q.total} (${q.percentage}%)</span></td>
+                <td>${dateStr}</td>
+                <td style="text-align:right;">
+                  <button class="review-btn" onclick="window.location.href='theoretical-roadmap.html'">Practice</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          historyBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="quiz-empty">
+                No quiz history yet. 
+                <button class="review-btn" style="margin-left:8px;" onclick="window.location.href='theoretical-roadmap.html'">Start Node 1 Quiz</button>
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      // 7. Badges Earned Grid
+      const badgeRow = document.getElementById('badgeRow');
+      if (badgeRow) {
+        const has100 = quizHistory.some(q => q.percentage === 100);
+        const badges = [
+          { name: 'HTML Pioneer', code: 'HTML', unlocked: cleared >= 1, color: 'linear-gradient(135deg,#3B82F6,#1D4ED8)' },
+          { name: 'Sharpshooter', code: '100%', unlocked: has100 || cleared >= 2, color: 'linear-gradient(135deg,#F59E0B,#D97706)' },
+          { name: 'Fast Learner', code: '3 LVL', unlocked: cleared >= 3, color: 'linear-gradient(135deg,#10B981,#059669)' },
+          { name: 'Quiz Veteran', code: '5 QZ', unlocked: quizHistory.length >= 3 || cleared >= 4, color: 'linear-gradient(135deg,#8B5CF6,#6D28D9)' },
+          { name: 'Job Ready', code: 'PRO', unlocked: cleared >= total, color: 'linear-gradient(135deg,#EC4899,#BE185D)' }
+        ];
+
+        badgeRow.innerHTML = badges.map(b => `
+          <div class="badge-item ${b.unlocked ? '' : 'locked'}" title="${b.unlocked ? 'Unlocked: ' + b.name : 'Locked — Clear requirements to earn'}">
+            <div class="badge-hex" style="${b.unlocked ? `background:${b.color};` : ''}">
+              ${b.unlocked ? b.code : '<i data-lucide="lock" style="width:16px;height:16px;"></i>'}
+            </div>
+            <span class="badge-name">${b.name}</span>
+          </div>
+        `).join('');
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function onStartExercise() {
+      window.location.href = 'theoretical-roadmap.html';
+    }
+
+    function onViewResource() {
+      window.location.href = 'theoretical-roadmap.html';
+    }
+
+    window.addEventListener('load', () => {
+      initDashboard();
+    });
+  </script>
 </body>
+
 </html>
