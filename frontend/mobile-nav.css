@@ -90,15 +90,14 @@
 
   /* ── 3. MOBILE SLIDE-OUT DRAWER & BACKDROP ── */
   .mobile-drawer-backdrop {
-    display: block;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 1050;
     opacity: 0;
     pointer-events: none;
@@ -120,20 +119,44 @@
     bottom: 0 !important;
     width: 280px !important;
     height: 100vh !important;
-    background: #121218 !important;
+    background: #0E0E14 !important;
     border-radius: 0 24px 24px 0 !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
     box-shadow: none !important;
-    z-index: 1100 !important;
+    z-index: 2000 !important;
     transform: translateX(-100%) !important;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
     overflow-y: auto !important;
-    padding: 24px 18px !important;
+    padding: 20px 16px !important;
     display: flex !important;
+    flex-direction: column !important;
   }
   .bw-pill-nav.mobile-drawer-open {
     transform: translateX(0) !important;
-    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: 16px 0 50px rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .mobile-drawer-close-btn {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  .bw-pill-nav a,
+  .bw-pill-nav .nav-link,
+  .bw-pill-nav .bw-nav-btn {
+    opacity: 1 !important;
+    color: #E2E8F0 !important;
+    filter: none !important;
   }
 
   /* ── 4. MOBILE BOTTOM NAVIGATION (REMOVED / HIDDEN) ── */

@@ -65,10 +65,26 @@
     const backdrop = document.getElementById('mobileDrawerBackdrop');
     const sidebar = document.querySelector('.bw-pill-nav');
 
+    // Move sidebar out of shell into document.body to prevent parent backdrop-filter blur trapping
+    if (sidebar && sidebar.parentElement !== document.body) {
+      document.body.appendChild(sidebar);
+    }
+
+    // Add close button inside drawer if not present
+    if (sidebar && !sidebar.querySelector('.mobile-drawer-close-btn')) {
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'mobile-drawer-close-btn';
+      closeBtn.setAttribute('aria-label', 'Close menu');
+      closeBtn.innerHTML = '<i data-lucide="x" style="width: 20px; height: 20px; stroke: #FFFFFF;"></i>';
+      closeBtn.onclick = closeDrawer;
+      sidebar.prepend(closeBtn);
+    }
+
     function openDrawer() {
       if (sidebar) sidebar.classList.add('mobile-drawer-open');
       if (backdrop) backdrop.classList.add('open');
       document.body.style.overflow = 'hidden';
+      if (window.lucide) window.lucide.createIcons();
     }
 
     function closeDrawer() {
