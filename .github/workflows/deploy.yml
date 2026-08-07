@@ -1,0 +1,28 @@
+name: Deploy SkillForge AI to Netlify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Frontend to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './frontend'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions: ${{ github.event.head_commit.message }}"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          overwrites-pull-request-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN || 'nfp_dRsdGp2KTKNTECKeGbq9PXh2yuUrQ75Be54d' }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID || '08b604af-7170-464f-992d-12853a1c1bdd' }}
+        timeout-minutes: 5
