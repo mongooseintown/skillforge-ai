@@ -109,6 +109,10 @@
     pointer-events: auto;
   }
 
+  .ambient-mesh {
+    display: none !important;
+  }
+
   .bw-pill-nav {
     position: fixed !important;
     top: 0 !important;
@@ -119,16 +123,17 @@
     background: #121218 !important;
     border-radius: 0 24px 24px 0 !important;
     border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: none !important;
     z-index: 1100 !important;
     transform: translateX(-100%) !important;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
     overflow-y: auto !important;
     padding: 24px 18px !important;
     display: flex !important;
   }
   .bw-pill-nav.mobile-drawer-open {
     transform: translateX(0) !important;
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8) !important;
   }
 
   /* ── 4. MOBILE BOTTOM NAVIGATION (REMOVED / HIDDEN) ── */
