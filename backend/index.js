@@ -37,6 +37,10 @@ app.use('*', notFoundHandler);
 // Global Error Handling Middleware
 app.use(globalErrorHandler);
 
-app.listen(PORT, () => {
-  console.log(`⚡ SkillForge Express API Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`⚡ SkillForge Express API Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
