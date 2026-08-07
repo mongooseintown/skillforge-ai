@@ -54,36 +54,13 @@
       document.body.appendChild(backdrop);
     }
 
-    // 3. Create or Find Mobile Bottom Navigation Bar
-    if (!document.querySelector('.mobile-bottom-nav')) {
-      const bottomNav = document.createElement('nav');
-      bottomNav.className = 'mobile-bottom-nav';
-      bottomNav.innerHTML = `
-        <a href="theoretical-roadmap.html" class="mobile-nav-tab ${activeKey === 'home' ? 'active' : ''}" data-tab="home" title="Roadmap">
-          <i data-lucide="home"></i>
-          <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="mobile-nav-tab ${activeKey === 'dashboard' ? 'active' : ''}" data-tab="dashboard" title="Dashboard">
-          <i data-lucide="layout-grid"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="profile.html" class="mobile-nav-tab ${activeKey === 'profile' ? 'active' : ''}" data-tab="profile" title="Profile">
-          <i data-lucide="user"></i>
-          <span>Profile</span>
-        </a>
-        <a href="verify.html" class="mobile-nav-tab ${activeKey === 'verify' ? 'active' : ''}" data-tab="verify" title="Verify">
-          <i data-lucide="shield-check"></i>
-          <span>Verify</span>
-        </a>
-        <a href="projects.html" class="mobile-nav-tab ${activeKey === 'projects' ? 'active' : ''}" data-tab="projects" title="Projects">
-          <i data-lucide="folder-git-2"></i>
-          <span>Projects</span>
-        </a>
-      `;
-      document.body.appendChild(bottomNav);
+    // Clean up any existing bottom nav if present
+    const existingBottomNav = document.querySelector('.mobile-bottom-nav');
+    if (existingBottomNav) {
+      existingBottomNav.remove();
     }
 
-    // 4. Hook Drawer Interactions
+    // 3. Hook Drawer Interactions
     const openBtn = document.getElementById('mobileDrawerOpenBtn');
     const backdrop = document.getElementById('mobileDrawerBackdrop');
     const sidebar = document.querySelector('.bw-pill-nav');

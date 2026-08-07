@@ -131,93 +131,19 @@
     transform: translateX(0) !important;
   }
 
-  /* ── 4. MOBILE BOTTOM NAVIGATION (FIXED BAR) ── */
+  /* ── 4. MOBILE BOTTOM NAVIGATION (REMOVED / HIDDEN) ── */
   .mobile-bottom-nav {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-around;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: #0E0E14;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-    z-index: 1000;
-  }
-
-  .mobile-nav-tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    height: 100%;
-    color: #8E8E9E;
-    text-decoration: none;
-    position: relative;
-    padding: 6px 0;
-    transition: color 0.2s ease, transform 0.15s ease;
-    gap: 3px;
-  }
-  .mobile-nav-tab:active {
-    transform: scale(0.94);
-  }
-
-  .mobile-nav-tab i {
-    width: 20px;
-    height: 20px;
-    stroke-width: 2.2;
-    transition: stroke 0.2s ease;
-  }
-
-  .mobile-nav-tab span {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .mobile-nav-tab.active {
-    color: #FFFFFF;
-  }
-  .mobile-nav-tab.active i {
-    stroke: #A855F7;
-  }
-
-  /* Active Indicator Line Under Text (As in Mockup) */
-  .mobile-nav-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    width: 24px;
-    height: 2.5px;
-    background: #A855F7;
-    border-radius: 9999px;
-    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
-  }
-
-  /* Mini avatar inside profile tab */
-  .mobile-nav-tab .tab-avatar {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.2);
-    object-fit: cover;
-  }
-  .mobile-nav-tab.active .tab-avatar {
-    border-color: #A855F7;
+    display: none !important;
   }
 
   /* ── 5. MOBILE APP MAIN CONTAINER & CANVAS OVERRIDES ── */
   .app-dashboard-shell {
-    margin: 58px 0 68px 0 !important;
+    margin: 58px 0 0 0 !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
     max-height: none !important;
-    min-height: calc(100vh - 126px) !important;
+    min-height: calc(100vh - 58px) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     display: block !important;
