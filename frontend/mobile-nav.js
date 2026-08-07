@@ -62,19 +62,12 @@
     const backdrop = document.getElementById('mobileDrawerBackdrop');
     const sidebar = document.querySelector('.bw-pill-nav');
 
-    // Add close button inside drawer if not present
-    if (sidebar && !sidebar.querySelector('.mobile-drawer-close-btn')) {
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'mobile-drawer-close-btn';
-      closeBtn.setAttribute('aria-label', 'Close menu');
-      closeBtn.innerHTML = '<i data-lucide="x" style="width: 20px; height: 20px; stroke: #FFFFFF;"></i>';
-      closeBtn.onclick = closeDrawer;
-      sidebar.prepend(closeBtn);
-    }
-
     function openDrawer() {
       if (sidebar) sidebar.classList.add('mobile-drawer-open');
       if (backdrop) backdrop.classList.add('open');
+      if (openBtn) {
+        openBtn.innerHTML = '<i data-lucide="x" style="width: 22px; height: 22px;"></i>';
+      }
       document.body.style.overflow = 'hidden';
       if (window.lucide) window.lucide.createIcons();
     }
@@ -82,13 +75,25 @@
     function closeDrawer() {
       if (sidebar) sidebar.classList.remove('mobile-drawer-open');
       if (backdrop) backdrop.classList.remove('open');
+      if (openBtn) {
+        openBtn.innerHTML = '<i data-lucide="menu" style="width: 22px; height: 22px;"></i>';
+      }
       document.body.style.overflow = '';
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function toggleDrawer() {
+      if (sidebar && sidebar.classList.contains('mobile-drawer-open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
     }
 
     if (openBtn) {
       openBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        openDrawer();
+        toggleDrawer();
       });
     }
 
