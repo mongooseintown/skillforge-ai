@@ -62,11 +62,6 @@
     const backdrop = document.getElementById('mobileDrawerBackdrop');
     const sidebar = document.querySelector('.bw-pill-nav');
 
-    // Move sidebar out of shell into document.body to prevent parent backdrop-filter blur trapping
-    if (sidebar && sidebar.parentElement !== document.body) {
-      document.body.appendChild(sidebar);
-    }
-
     // Add close button inside drawer if not present
     if (sidebar && !sidebar.querySelector('.mobile-drawer-close-btn')) {
       const closeBtn = document.createElement('button');

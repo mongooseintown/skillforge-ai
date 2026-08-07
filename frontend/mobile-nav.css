@@ -6,8 +6,9 @@
 /* ── HIDDEN ON DESKTOP ── */
 .mobile-top-header,
 .mobile-bottom-nav,
-.mobile-drawer-backdrop {
-  display: none;
+.mobile-drawer-backdrop,
+.mobile-drawer-close-btn {
+  display: none !important;
 }
 
 /* ==========================================================================
