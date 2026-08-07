@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Create Account — SkillForge AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Web SDK v10 CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      GithubAuthProvider, 
+      signInWithPopup, 
+      signInWithRedirect,
+      getRedirectResult,
+      createUserWithEmailAndPassword, 
+      updateProfile 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT3Y2VlxtYKi5hMBXgXnrk0IScPMvD5sc",
+      authDomain: "skillforge-ai-3674f.firebaseapp.com",
+      projectId: "skillforge-ai-3674f",
+      storageBucket: "skillforge-ai-3674f.firebasestorage.app",
+      messagingSenderId: "313873956489",
+      appId: "1:313873956489:web:f16f4edc9c859013c01058",
+      measurementId: "G-MLYLR93BV5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.addScope('profile');
+    googleProvider.addScope('email');
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+
+    const githubProvider = new GithubAuthProvider();
+    githubProvider.addScope('read:user');
+    githubProvider.addScope('user:email');
+
+    function extractAndStoreGoogleUser(user, targetRole) {
+      const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+      const exactName = user.displayName || pData.displayName || (user.email ? user.email.split('@')[0] : 'Learner');
+      const exactEmail = user.email || pData.email || '';
+      let exactPhoto = user.photoURL || pData.photoURL;
+
+      if (!exactPhoto) {
+        exactPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=7C3AED&color=ffffff&bold=true&rounded=true&size=256`;
+      }
+
+      const profile = {
+        uid: user.uid,
+        name: exactName,
+        displayName: exactName,
+        email: exactEmail,
+        photoURL: exactPhoto,
+        targetRole: targetRole || 'Full-Stack Developer (MERN / PERN)',
+        authProvider: 'Google',
+        lastLogin: new Date().toISOString()
+      };
+
+      localStorage.setItem('user', JSON.stringify(profile));
+      return profile;
+    }
+
+    function extractAndStoreGithubUser(user, targetRole) {
+      const pData = (user.providerData && user.providerData[0]) ? user.providerData[0] : {};
+      const exactName = user.displayName || pData.displayName || user.reloadUserInfo?.screenName || (user.email ? user.email.split('@')[0] : 'Developer');
+      const exactEmail = user.email || pData.email || '';
+      let exactPhoto = user.photoURL || pData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(exactName)}&background=7C3AED&color=ffffff&bold=true&rounded=true&size=256`;
+
+      const profile = {
+        uid: user.uid,
+        name: exactName,
+        displayName: exactName,
+        email: exactEmail,
+        photoURL: exactPhoto,
+        targetRole: targetRole || 'Full-Stack Developer (MERN / PERN)',
+        authProvider: 'GitHub',
+        lastLogin: new Date().toISOString()
+      };
+
+      localStorage.setItem('user', JSON.stringify(profile));
+      return profile;
+    }
+
+    window.handleGoogleRegister = async function() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        if (result && result.user) {
+          extractAndStoreGoogleUser(result.user);
+          window.location.href = 'dashboard.html';
+        }
+      } catch (err) {
+        console.error("Google Auth Error:", err);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          signInWithRedirect(auth, googleProvider);
+        } else if (err.code !== 'auth/popup-closed-by-user') {
+          alert("Google Sign-In Notice: " + err.message);
+        }
+      }
+    };
+
+    window.handleGithubRegister = async function() {
+      try {
+        const result = await signInWithPopup(auth, githubProvider);
+        if (result && result.user) {
+          extractAndStoreGithubUser(result.user);
+          window.location.href = 'dashboard.html';
+        }
+      } catch (err) {
+        console.error("GitHub Auth Error:", err);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          signInWithRedirect(auth, githubProvider);
+        } else if (err.code !== 'auth/popup-closed-by-user') {
+          alert("GitHub Sign-In Notice: " + err.message);
+        }
+      }
+    };
+
+    getRedirectResult(auth).then((result) => {
+      if (result && result.user) {
+        if (result.providerId === 'github.com' || result.user.providerData?.[0]?.providerId === 'github.com') {
+          extractAndStoreGithubUser(result.user);
+        } else {
+          extractAndStoreGoogleUser(result.user);
+        }
+        window.location.href = 'dashboard.html';
+      }
+    }).catch(console.error);
+
+    window.handleEmailRegister = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const targetRole = 'Full-Stack Developer (MERN / PERN)';
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await updateProfile(user, { displayName: name });
+        storeUserProfile(user, name, 'password', targetRole);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        if (err.code === 'auth/email-already-in-use') {
+          alert("This email is already registered. Please sign in or use a different email.");
+        } else {
+          const manualProfile = {
+            uid: 'manual-' + Date.now(),
+            name: name,
+            displayName: name,
+            email: email,
+            photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7C3AED&color=ffffff&bold=true&rounded=true`,
+            targetRole: targetRole,
+            authProvider: 'password'
+          };
+          localStorage.setItem('user', JSON.stringify(manualProfile));
+          window.location.href = 'dashboard.html';
+        }
+      }
+    };
+  </script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background: #05020E;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #FFFFFF;
+    }
+
+    #celestialCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    /* ── GLASS CARD ── */
+    .card {
+      width: 100%;
+      max-width: 370px;
+      background: linear-gradient(145deg, rgba(18, 14, 30, 0.82) 0%, rgba(10, 8, 18, 0.88) 100%);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      padding: 34px 32px 30px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-sub {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    /* ── INPUTS ── */
+    .field {
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .field-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .inp, .sel {
+      width: 100%;
+      height: 46px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 0 16px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .sel option {
+      background: #0E0820;
+      color: #FFFFFF;
+    }
+
+    .inp:focus, .sel:focus {
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .inp::placeholder {
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .inp-pw {
+      padding-right: 58px;
+    }
+
+    .show-btn {
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .show-btn:hover { color: #fff; }
+
+    /* ── SIGN UP BUTTON ── */
+    .btn-primary {
+      width: 100%;
+      height: 46px;
+      background: linear-gradient(90deg, #5B17C7 0%, #7928E8 40%, #9333EA 100%);
+      border: none;
+      border-radius: 6px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.3s;
+      box-shadow: 0 4px 22px rgba(123, 40, 232, 0.4);
+      margin-top: 6px;
+    }
+    .btn-primary:hover {
+      opacity: 0.92;
+      box-shadow: 0 6px 30px rgba(123, 40, 232, 0.55);
+    }
+
+    /* ── OR DIVIDER ── */
+    .or-row {
+      display: flex;
+      align-items: center;
+      margin: 16px 0;
+      color: rgba(255, 255, 255, 0.32);
+      font-size: 0.78rem;
+    }
+    .or-row::before, .or-row::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .or-row span { padding: 0 12px; }
+
+    /* ── SOCIAL BUTTONS ── */
+    .btn-social {
+      width: 100%;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-social:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ── FOOTER ── */
+    .foot {
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
+    .foot a {
+      color: #7C3AED;
+      font-weight: 600;
+      text-decoration: none;
+      margin-left: 4px;
+    }
+    .foot a:hover { color: #A78BFA; text-decoration: underline; }
+
+    .top-logo-link {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFF;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      z-index: 50;
+      transition: opacity 0.2s;
+    }
+    .top-logo-link:hover {
+      opacity: 0.8;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 22px 24px; }
+      .top-logo-link { top: 20px; left: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="celestialCanvas"></canvas>
+
+<div class="page-wrap">
+  <a href="index.html" class="top-logo-link">
+    <svg style="width: 24px; height: 24px;" viewBox="0 0 40 40" fill="none">
+      <path d="M8 14L18 6L28 14L18 22L8 14Z" fill="#7C3AED"/>
+      <path d="M8 20L18 28L28 20" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>SkillForge AI</span>
+  </a>
+  <div class="card">
+    <h1 class="card-title">Sign Up</h1>
+    <p class="card-sub">Launch your personalized AI career roadmap</p>
+
+    <form onsubmit="handleEmailRegister(event)">
+      <div class="field">
+        <div class="field-inner">
+          <input type="text" id="regName" class="inp" placeholder="Full Name" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-inner">
+          <input type="email" id="regEmail" class="inp" placeholder="Email Address" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-inner">
+          <input type="password" id="regPassword" class="inp inp-pw" placeholder="Password" required minlength="6">
+          <button type="button" class="show-btn" id="showPw" onclick="togglePw()">Show</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="margin-top: 10px;">Create Account</button>
+    </form>
+
+    <div class="or-row"><span>or</span></div>
+
+    <button type="button" class="btn-social" onclick="handleGoogleRegister()">
+      <svg width="16" height="16" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.07 5.07 0 01-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      <span>Sign up with Google</span>
+    </button>
+
+    <button type="button" class="btn-social" onclick="handleGithubRegister()">
+      <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      <span>Sign up with GitHub</span>
+    </button>
+  </div>
+
+  <div class="foot">
+    Already have an account? <a href="login.html">Sign In</a>
+  </div>
+</div>
+
+<script>
+  function togglePw() {
+    const inp = document.getElementById('regPassword');
+    const btn = document.getElementById('showPw');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  }
+
+  // ─── CANVAS: Exact Same Celestial Scene as Login ───
+  const C = document.getElementById('celestialCanvas');
+  const X = C.getContext('2d');
+  let W, H;
+
+  function resize() { W = C.width = innerWidth; H = C.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+
+  const stars = Array.from({length: 90}, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.2 + 0.2,
+    a: Math.random() * 0.6 + 0.2,
+    s: Math.random() * 0.015 + 0.004,
+    p: Math.random() * 6.28
+  }));
+
+  function frame() {
+    X.clearRect(0, 0, W, H);
+
+    // 1) Deep space fill
+    X.fillStyle = '#05020E';
+    X.fillRect(0, 0, W, H);
+
+    // 2) Subtle deep purple ambient wash
+    const amb = X.createRadialGradient(W * 0.7, H * 0.3, 0, W * 0.6, H * 0.5, W * 0.9);
+    amb.addColorStop(0, 'rgba(30, 8, 60, 0.5)');
+    amb.addColorStop(0.4, 'rgba(15, 4, 35, 0.3)');
+    amb.addColorStop(1, 'rgba(5, 2, 14, 0)');
+    X.fillStyle = amb;
+    X.fillRect(0, 0, W, H);
+
+    // 3) Stars
+    const t = Date.now();
+    stars.forEach(s => {
+      const flick = Math.sin(t * s.s + s.p) * 0.2;
+      X.beginPath();
+      X.arc(s.x * W, s.y * H, s.r, 0, 6.28);
+      X.fillStyle = `rgba(220, 210, 255, ${Math.max(0.08, Math.min(0.8, s.a + flick))})`;
+      X.fill();
+    });
+
+    // 4) Small bokeh orb — upper left
+    const bk = X.createRadialGradient(W * 0.12, H * 0.25, 0, W * 0.12, H * 0.25, 70);
+    bk.addColorStop(0, 'rgba(180, 140, 255, 0.22)');
+    bk.addColorStop(0.5, 'rgba(130, 80, 220, 0.08)');
+    bk.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = bk;
+    X.beginPath(); X.arc(W * 0.12, H * 0.25, 70, 0, 6.28); X.fill();
+
+    // 5) PLANET — large sphere upper-right
+    const pR = Math.max(W * 0.42, 520);
+    const pX = W * 0.82;
+    const pY = H * 0.22;
+
+    X.save();
+    X.beginPath(); X.arc(pX, pY, pR, 0, 6.28); X.clip();
+
+    const pSurf = X.createRadialGradient(pX + pR * 0.3, pY - pR * 0.2, pR * 0.05, pX, pY, pR);
+    pSurf.addColorStop(0, '#0C0520');
+    pSurf.addColorStop(0.4, '#060210');
+    pSurf.addColorStop(1, '#030008');
+    X.fillStyle = pSurf;
+    X.fillRect(pX - pR, pY - pR, pR * 2, pR * 2);
+
+    const iRim = X.createRadialGradient(
+      pX - pR * 0.7, pY + pR * 0.55, pR * 0.15,
+      pX, pY, pR
+    );
+    iRim.addColorStop(0, 'rgba(180, 80, 255, 0.5)');
+    iRim.addColorStop(0.12, 'rgba(139, 60, 220, 0.4)');
+    iRim.addColorStop(0.3, 'rgba(100, 30, 180, 0.2)');
+    iRim.addColorStop(0.55, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = iRim;
+    X.fillRect(pX - pR, pY - pR, pR * 2, pR * 2);
+
+    X.restore();
+
+    // 6) Crescent rim glow
+    X.save();
+    X.beginPath();
+    X.arc(pX, pY, pR, Math.PI * 0.42, Math.PI * 1.18, false);
+    X.lineWidth = 18;
+    X.strokeStyle = 'rgba(150, 60, 240, 0.5)';
+    X.shadowColor = '#B56BFF';
+    X.shadowBlur = 60;
+    X.stroke();
+
+    X.beginPath();
+    X.arc(pX, pY, pR, Math.PI * 0.48, Math.PI * 1.12, false);
+    X.lineWidth = 3.5;
+    X.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+    X.shadowColor = '#D8A0FF';
+    X.shadowBlur = 30;
+    X.stroke();
+    X.restore();
+
+    // 7) Lens flare at crescent midpoint
+    const fAngle = Math.PI * 0.82;
+    const fX = pX + Math.cos(fAngle) * pR;
+    const fY = pY + Math.sin(fAngle) * pR;
+
+    const fl = X.createRadialGradient(fX, fY, 0, fX, fY, 250);
+    fl.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
+    fl.addColorStop(0.08, 'rgba(240, 180, 255, 0.9)');
+    fl.addColorStop(0.2, 'rgba(200, 130, 255, 0.65)');
+    fl.addColorStop(0.4, 'rgba(140, 60, 230, 0.3)');
+    fl.addColorStop(0.7, 'rgba(80, 20, 160, 0.08)');
+    fl.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    X.fillStyle = fl;
+    X.beginPath(); X.arc(fX, fY, 250, 0, 6.28); X.fill();
+
+    const stk = X.createLinearGradient(fX - 300, fY, fX + 300, fY);
+    stk.addColorStop(0, 'rgba(180, 100, 255, 0)');
+    stk.addColorStop(0.35, 'rgba(200, 140, 255, 0.2)');
+    stk.addColorStop(0.5, 'rgba(255, 255, 255, 0.75)');
+    stk.addColorStop(0.65, 'rgba(200, 140, 255, 0.2)');
+    stk.addColorStop(1, 'rgba(180, 100, 255, 0)');
+    X.fillStyle = stk;
+    X.fillRect(fX - 300, fY - 2.5, 600, 5);
+
+    const stk2 = X.createLinearGradient(fX - 400, fY, fX + 400, fY);
+    stk2.addColorStop(0, 'rgba(150, 80, 230, 0)');
+    stk2.addColorStop(0.4, 'rgba(160, 100, 240, 0.08)');
+    stk2.addColorStop(0.5, 'rgba(220, 180, 255, 0.3)');
+    stk2.addColorStop(0.6, 'rgba(160, 100, 240, 0.08)');
+    stk2.addColorStop(1, 'rgba(150, 80, 230, 0)');
+    X.fillStyle = stk2;
+    X.fillRect(fX - 400, fY - 8, 800, 16);
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+</script>
+</body>
+</html>
